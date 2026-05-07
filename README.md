@@ -74,7 +74,7 @@ The project uses a relational database system for managing:
 The database schema is included in:
 
 ```bash
-database/horrorverse.sql
+database/horrorverse_db.sql
 ```
 
 # Backend Setup
