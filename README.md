@@ -122,7 +122,7 @@ CREATE DATABASE horrorverse;
 3. Import the SQL file:
 
 ```bash
-database/horrorverse.sql
+database/horrorverse_db.sql
 ```
 
 ---
