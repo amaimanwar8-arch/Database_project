@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Favorites - HorrorVerse</title>
+ <link rel="stylesheet" href="sidebar.css">
+ <script src="shared-functions.js"></script>
+<script src="sidebar.js" defer></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                  url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920') center/cover fixed;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .favorites-container {
+      max-width: 1600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      text-align: center;
+      background: rgba(20,0,0,0.95);
+      padding: 50px 30px;
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.5);
+      margin-bottom: 40px;
+      animation: slideDown 0.8s;
+    }
+
+    .page-header h1 {
+      font-size: 3.5rem;
+      color: #ff4444;
+      text-shadow: 0 0 30px #dc143c;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.5);
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 60px rgba(220,20,60,0.7);
+    }
+
+    .stat-value {
+      font-size: 3rem;
+      color: #ff4444;
+      font-weight: bold;
+      text-shadow: 0 0 20px #dc143c;
+    }
+
+    .stat-label {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs button {
+      padding: 12px 28px;
+      border: 2px solid #dc143c;
+      border-radius: 25px;
+      background: rgba(220,20,60,0.2);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+
+    .filter-tabs button:hover,
+    .filter-tabs button.active {
+      background: #dc143c;
+      box-shadow: 0 0 20px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .movie-card {
+      background: rgba(20,0,0,0.95);
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 30px rgba(220,20,60,0.4);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-12px) scale(1.03);
+      box-shadow: 0 15px 60px rgba(220,20,60,0.7);
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+
+    .movie-card:hover img {
+      transform: scale(1.15);
+    }
+
+    .movie-info {
+      padding: 20px;
+    }
+
+    .movie-info h3 {
+      color: #ff6666;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px #dc143c;
+    }
+
+    .genre-year {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffa500;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .description {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .card-actions button {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #dc143c;
+      border-radius: 10px;
+      background: rgba(220,20,60,0.3);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .card-actions button:hover {
+      background: #dc143c;
+      box-shadow: 0 0 15px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    .remove-favorite-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #e74c3c;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .remove-favorite-btn:hover {
+      background: #c0392b;
+      transform: scale(1.15) rotate(15deg);
+      box-shadow: 0 0 20px #e74c3c;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.5);
+    }
+
+    .empty-state h2 {
+      font-size: 2.5rem;
+      color: #ff4444;
+      margin-bottom: 20px;
+    }
+
+    .empty-state p {
+      font-size: 1.2rem;
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    .empty-state button {
+      padding: 15px 40px;
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      background: #dc143c;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .empty-state button:hover {
+      background: #ff4444;
+      box-shadow: 0 0 25px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(20,0,0,0.95);
+      border-top: 3px solid #dc143c;
+      box-shadow: 0 -5px 30px rgba(220,20,60,0.3);
+      margin-top: 60px;
+      color: #888;
+    }
+
+    @keyframes slideDown {
+      from { 
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 2.5rem;
+      }
+
+      .favorites-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+
+  <div class="favorites-container">
+    <div class="page-header">
+      <h1>💀 My Favorite Horror Movies 💀</h1>
+      <p>Your personal collection of terror</p>
+    </div>
+
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-value" id="totalFavorites">12</div>
+        <div class="stat-label">Total Favorites</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">47h</div>
+        <div class="stat-label">Total Runtime</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">4.7⭐</div>
+        <div class="stat-label">Avg. Rating</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Genres</div>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="active" onclick="filterFavorites(this, 'all')">All Favorites</button>
+      <button onclick="filterFavorites(this, 'supernatural')">Supernatural</button>
+      <button onclick="filterFavorites(this, 'slasher')">Slasher</button>
+      <button onclick="filterFavorites(this, 'psychological')">Psychological</button>
+      <button onclick="filterFavorites(this, 'creature')">Creature</button>
+      <button onclick="filterFavorites(this, 'folk-horror')">Folk Horror</button>
+    </div>
+
+    <div class="favorites-grid" id="favoritesGrid"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 HorrorVerse | All Rights Reserved</p>
+  </footer>
+
+  <script>
+
+   
+let favoriteMovies = getFavorites();
+
+
+
+
+
+
+
+
+    function renderFavorites(moviesToRender = favoriteMovies) {
+      const grid = document.getElementById('favoritesGrid');
+      
+      if (moviesToRender.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <h2>No Favorites Yet!</h2>
+            <p>Start building your horror collection by adding movies to your favorites</p>
+            <button onclick="window.location.href='movielist.html'">Browse Movies</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = moviesToRender.map(movie => `
+        <div class="movie-card" data-genre="${movie.genre}" onclick="viewDetails(${movie.id})">
+          <button class="remove-favorite-btn" onclick="event.stopPropagation(); removeFavorite(${movie.id})">×</button>
+          <img src="${movie.image}" alt="${movie.title}">
+          <div class="movie-info">
+            <h3>${movie.title}</h3>
+            <p class="genre-year">${movie.genre.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} • ${movie.year}</p>
+            <div class="rating">
+              <span>${'⭐'.repeat(Math.floor(movie.rating))}</span>
+              <span>${movie.rating}</span>
+            </div>
+            <p class="description">${movie.description}</p>
+            <div class="card-actions">
+              <button onclick="event.stopPropagation(); viewDetails(${movie.id})">View Details</button>
+              <button onclick="event.stopPropagation(); watchMovie(${movie.id})">Watch Now</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('totalFavorites').textContent = moviesToRender.length;
+    }
+
+    function removeFavorite(id) {
+  const movie = favoriteMovies.find(m => m.id === id);
+  
+  if (confirm(`Remove "${movie.title}" from favorites?`)) {
+    // Remove from localStorage using the shared function
+    removeFromFavorites(id);
+    
+    // Also remove from local array
+    const index = favoriteMovies.findIndex(m => m.id === id);
+    if (index > -1) {
+      favoriteMovies.splice(index, 1);
+    }
+    
+    // Re-render the favorites
+    renderFavorites(favoriteMovies);
+    showNotification(`Removed "${movie.title}" from favorites`, '#e74c3c');
+  }
+}
+
+    function viewDetails(id) {
+      const movie = favoriteMovies.find(m => m.id === id);
+      const movieData = {
+        ...movie,
+        cast: ["Rafe Spall", "Arsher Ali", "Robert James-Collier"],
+        director: "David Bruckner",
+        runtime: "94 min"
+      };
+      sessionStorage.setItem('selectedMovie', JSON.stringify(movieData));
+      showNotification(`Opening details for "${movie.title}"...`, '#3498db');
+      setTimeout(() => {
+        window.location.href = 'moviedetails.html';
+      }, 500);
+    }
+
+    function watchMovie(id) {
+      const movie = favoriteMovies.find(m => m.id === id);
+      showNotification(`Starting "${movie.title}"...`, '#9b59b6');
+      setTimeout(() => {
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(movie.title + ' full movie')}`, '_blank');
+      }, 1000);
+    }
+
+    function filterFavorites(btn, genre) {
+      document.querySelectorAll('.filter-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filtered = genre === 'all' ? favoriteMovies : favoriteMovies.filter(m => m.genre === genre);
+      renderFavorites(filtered);
+      showNotification(`Showing ${genre === 'all' ? 'all' : genre} favorites`, '#3498db');
+    }
+
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background: ${color};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        z-index: 1000;
+        font-weight: bold;
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(() => notification.remove(), 300);
+      }, 2500);
+    }
+
+    renderFavorites();
+  </script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HorrorVerse - User Home</title>
+  <link rel="stylesheet" href="sidebar.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cinzel', serif; }
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); z-index: 0;
+    }
+    .container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .welcome {
+      text-align: center; margin: 50px auto 30px;
+    }
+    .welcome h1 {
+      font-size: 2.5rem; text-shadow: 0 0 15px crimson; margin-bottom: 10px;
+    }
+    .welcome p { font-size: 1.2rem; color: #ddd; }
+    section { margin-bottom: 50px; }
+    section h2 { font-size: 2rem; text-shadow: 0 0 10px crimson; margin-bottom: 20px; text-align: center; }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    .card {
+      background: rgba(20,0,0,0.8); border: 2px solid crimson; border-radius: 15px;
+      overflow: hidden; box-shadow: 0 0 20px crimson; transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px); box-shadow: 0 0 30px crimson;
+    }
+    .card img { width: 100%; height: 300px; object-fit: cover; }
+    .card .info { padding: 15px; text-align: left; }
+    .card .info h3 { margin-bottom: 8px; font-size: 1.3rem; color: #ff6666; text-shadow: 0 0 5px crimson; }
+    .card .info p { font-size: 0.95rem; color: #ccc; line-height: 1.4; }
+    .post-card .info p.content { margin-bottom: 10px; }
+    .post-card .info p.author { font-size: 0.85rem; color: #999; }
+    .event-card .info p.date { font-size: 0.9rem; color: #ff6666; margin-top: 10px; }
+    .loading { text-align: center; color: #ddd; }
+    .error { text-align: center; color: red; }
+    footer {
+      text-align: center; padding: 15px 0; background: rgba(20,0,0,0.85);
+      border-top: 2px solid crimson; box-shadow: 0 0 10px crimson; margin-top: 50px; position: relative; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <button class="menu-icon" onclick="openNav()">☰</button>
+    <div class="logo" onclick="window.location.href='index.html'">💀 HorrorVerse</div>
+  </nav>
+
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button id="yesLogout" onclick="localStorage.clear(); location.href='index.html'">Yes</button>
+        <button id="noLogout" onclick="document.getElementById('logoutModal').style.display='none'">No</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Welcome -->
+    <section class="welcome">
+      <h1 id="welcomeTitle">Welcome Back!</h1>
+      <p>Explore the latest horror films, community posts, your favorites, and upcoming events.</p>
+    </section>
+
+    <!-- Latest Movies -->
+    <section id="moviesSection">
+      <h2>Latest Horror Movies</h2>
+      <div class="grid" id="movieGrid">
+        <p class="loading">Loading movies...</p>
+      </div>
+    </section>
+
+    <!-- Community Posts -->
+    <section id="postsSection">
+      <h2>Community Posts</h2>
+      <div class="grid" id="postGrid">
+        <p class="loading">Loading posts...</p>
+      </div>
+    </section>
+
+    <!-- Your Favorites -->
+    <section id="favoritesSection">
+      <h2>Your Favorites</h2>
+      <div class="grid" id="favoritesGrid">
+        <p class="loading">Loading favorites...</p>
+      </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section id="eventsSection">
+      <h2>Upcoming Events</h2>
+      <div class="grid" id="eventsGrid">
+        <p class="loading">Loading events...</p>
+      </div>
+    </section>
+  </div>
+
+  <footer>&copy; 2025 HorrorVerse | All Rights Reserved</footer>
+
+  <script src="sidebar.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'user_login.html';
+    }
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      document.getElementById('welcomeTitle').innerHTML = `Welcome Back, <span style="color:crimson;">${user.name}</span>!`;
+    }
+
+    async function fetchData(endpoint) {
+      try {
+        const res = await fetch(`/api/user${endpoint}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        console.error(`Error fetching ${endpoint}:`, err);
+        return null;
+      }
+    }
+
+    function renderCards(gridId, items, type) {
+      const grid = document.getElementById(gridId);
+      if (!items || items.length === 0) {
+        grid.innerHTML = '<p class="error">No items found.</p>';
+        return;
+      }
+
+      let html = '';
+      items.slice(0, 6).forEach(item => {  // Limit to 6 per section for home page
+        if (type === 'movie') {
+          html += `
+            <div class="card movie-card">
+              <img src="${item.poster_url || 'placeholder.jpg'}" alt="${item.title}">
+              <div class="info">
+                <h3>${item.title} (${item.year || 'N/A'})</h3>
+                <p>${item.description ? item.description.substring(0, 100) + '...' : 'No description available.'}</p>
+              </div>
+            </div>`;
+        } else if (type === 'post') {
+          html += `
+            <div class="card post-card">
+              <div class="info">
+                <h3>${item.title || 'Post'}</h3>
+                <p class="content">${item.content.substring(0, 150) + '...'}</p>
+                <p class="author">By: ${item.author} | Likes: ${item.likes_count} | Comments: ${item.comments_count}</p>
+              </div>
+            </div>`;
+        } else if (type === 'favorite') {
+          html += `
+            <div class="card movie-card">
+              <img src="${item.poster_url || 'placeholder.jpg'}" alt="${item.title}">
+              <div class="info">
+                <h3>${item.title} (${item.year || 'N/A'})</h3>
+                <p>${item.description ? item.description.substring(0, 100) + '...' : 'No description available.'}</p>
+              </div>
+            </div>`;
+        } else if (type === 'event') {
+          html += `
+            <div class="card event-card">
+              <div class="info">
+                <h3>${item.title}</h3>
+                <p>${item.description ? item.description.substring(0, 150) + '...' : 'No description available.'}</p>
+                <p class="date">Date: ${new Date(item.event_date).toLocaleString()}</p>
+              </div>
+            </div>`;
+        }
+      });
+      grid.innerHTML = html;
+    }
+
+    async function loadContent() {
+      const movies = await fetchData('/movies');
+      renderCards('movieGrid', movies, 'movie');
+
+      const posts = await fetchData('/posts');
+      renderCards('postGrid', posts, 'post');
+
+      const favorites = await fetchData('/favorites');
+      renderCards('favoritesGrid', favorites, 'favorite');
+
+      const events = await fetchData('/events');
+      renderCards('eventsGrid', events, 'event');
+    }
+
+    loadContent();
+  </script>
+</body>
+</html>

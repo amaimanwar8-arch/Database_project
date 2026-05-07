@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Users - HorrorVerse Admin</title>
+<style>
+    body {
+        background: #000;
+        color: white;
+        font-family: 'Cinzel', serif;
+        padding: 40px;
+    }
+    h1 {
+        color: crimson;
+        text-shadow: 0 0 10px crimson;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 2px solid crimson;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid crimson;
+    }
+    th {
+        background: rgba(200,0,0,0.6);
+    }
+    .inactive {
+        color: gray;
+        text-decoration: line-through;
+    }
+    button {
+        padding: 5px 10px;
+        background: crimson;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: darkred;
+    }
+</style>
+</head>
+<body>
+
+<h1>Manage Users</h1>
+
+<table id="userTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="u1">
+            <td>Jane Doe</td>
+            <td>jane@example.com</td>
+            <td class="status">Active</td>
+            <td><button onclick="toggleUser('u1')">Deactivate</button></td>
+        </tr>
+
+        <tr id="u2">
+            <td>John Smith</td>
+            <td>john@example.com</td>
+            <td class="status">Active</td>
+            <td><button onclick="toggleUser('u2')">Deactivate</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+function toggleUser(id) {
+    const row = document.getElementById(id);
+    const statusCell = row.querySelector(".status");
+    const button = row.querySelector("button");
+
+    if (statusCell.innerText === "Active") {
+        statusCell.innerText = "Inactive";
+        row.classList.add("inactive");
+        button.innerText = "Activate";
+    } else {
+        statusCell.innerText = "Active";
+        row.classList.remove("inactive");
+        button.innerText = "Deactivate";
+    }
+}
+</script>
+
+</body>
+</html>

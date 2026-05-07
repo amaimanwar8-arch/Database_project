@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-H6N1s...snipped...==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="sidebar.css">
+  <style>
+    /* Reset & base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(3px);
+      z-index: 0;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: crimson;
+      font-size: 1.8rem;
+      cursor: pointer;
+      text-shadow: 0 0 10px crimson;
+    }
+    /* Navbar */
+    .navbar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(20,0,0,0.85);
+      border-bottom: 2px solid crimson;
+      box-shadow: 0 0 15px crimson;
+    }
+    .menu-btn:hover {
+      color: #fff;
+      text-shadow: 0 0 15px crimson;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+    }
+
+    /* Contact Section */
+    .contact-container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 80px auto 50px;
+      padding: 40px;
+      background: rgba(20,0,0,0.85);
+      border: 2px solid crimson;
+      border-radius: 20px;
+      box-shadow: 0 0 30px crimson;
+      text-align: center;
+    }
+
+    .contact-container h1 {
+      color: #ff4444;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 15px crimson;
+    }
+
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: rgba(30,0,0,0.9);
+      border: 2px solid crimson;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 20px crimson;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px #ff4444;
+    }.social-link {
+  color: #ff4444;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.social-link i {
+  font-size: 1.3rem;
+}
+
+.social-link:hover {
+  color: #fff;
+  text-shadow: 0 0 8px crimson;
+}
+
+    .card i {
+      font-size: 2.5rem;
+      color: crimson;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #ff6666;
+      font-size: 1.5rem;
+      text-shadow: 0 0 8px crimson;
+    }
+
+    .card p {
+      color: #ccc;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      background: rgba(20,0,0,0.85);
+      border-top: 2px solid crimson;
+      box-shadow: 0 0 10px crimson;
+      margin-top: 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Icons */
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to logout?</p>
+    <div class="modal-buttons">
+      <button id="yesLogout">Yes</button>
+      <button id="noLogout">No</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Contact Section -->
+  <div class="contact-container">
+    <h1>Contact Us</h1>
+    <div class="contact-cards">
+      <div class="card">
+        <i class="fas fa-envelope"></i>
+        <h3>Email</h3>
+        <p>support@horrorverse.com</p>
+      </div>
+      <div class="card">
+        <i class="fas fa-phone"></i>
+        <h3>Phone</h3>
+        <p>+1 (555) 123-4567</p>
+      </div>
+      <div class="card">
+        <i class="fas fa-map-marker-alt"></i>
+        <h3>Address</h3>
+        <p>123 Haunted Lane, Spooky Town, USA</p>
+      </div>
+<div class="card">
+  <i class="fab fa-facebook-f"></i>
+  <h3>Social</h3>
+  <p>
+    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i> HorrorVerse</a><br>
+    <a href="#" class="social-link"><i class="fab fa-instagram"></i> HorrorVerse</a><br>
+    <a href="#" class="social-link"><i class="fab fa-twitter"></i> HorrorVerse</a>
+
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 HorrorVerse | All Rights Reserved
+  </footer>
+
+  <!-- Sidebar Script -->
+  <script src="sidebar.js"></script>
+
+</body>
+</html>

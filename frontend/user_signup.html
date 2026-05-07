@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - HorrorVerse</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(3px);
+      z-index: 0;
+    }
+
+    .register-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(20, 0, 0, 0.8);
+      padding: 50px 40px;
+      border-radius: 20px;
+      border: 2px solid crimson;
+      box-shadow: 0 0 30px crimson;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      animation: fadeInUp 1s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .register-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    label {
+      text-align: left;
+      font-weight: bold;
+      color: #ddd;
+      margin-bottom: 5px;
+    }
+
+    input, textarea {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #ff4444;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: crimson;
+      box-shadow: 0 0 8px crimson;
+      background: rgba(255,255,255,0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    button {
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(220,20,60,0.8);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .error { 
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff4d4d;
+      border: 1px solid #ff4d4d;
+    }
+
+    .success { 
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+      border: 1px solid #2ecc71;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    a {
+      color: #ff4444;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h2>Create Your Account</h2>
+    <form id="signupForm">
+      <label for="fullName">Full Name *</label>
+      <input type="text" id="fullName" required />
+
+      <label for="userEmail">Email *</label>
+      <input type="email" id="userEmail" required />
+
+      <label for="userPassword">Password *</label>
+      <input type="password" id="userPassword" required />
+
+      <label for="userDOB">Date of Birth *</label>
+      <input type="date" id="userDOB" required />
+
+      <label for="userBio">Bio (optional)</label>
+      <textarea id="userBio"></textarea>
+
+      <button type="submit" id="registerBtn">Register</button>
+      <div id="statusMessage"></div>
+    </form>
+
+    <p>Already have an account? <a href="user_login.html">Login here</a></p>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000';
+    const form = document.getElementById('signupForm');
+    const statusMessage = document.getElementById('statusMessage');
+    const registerBtn = document.getElementById('registerBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Get all values
+      const name = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('userEmail').value.trim();
+      const password = document.getElementById('userPassword').value.trim();
+      const dob = document.getElementById('userDOB').value.trim();
+      const bio = document.getElementById('userBio').value.trim();
+
+      console.log('Form submitted with:', { name, email, password, dob, bio });
+
+      // Validation
+      if (!name || !email || !password || !dob) {
+        showMessage('All required fields must be filled', 'error');
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage('Password must be at least 8 characters', 'error');
+        return;
+      }
+
+      registerBtn.disabled = true;
+      registerBtn.textContent = 'Registering...';
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+            dob: dob,
+            location: bio
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showMessage(data.error || 'Registration failed', 'error');
+          return;
+        }
+
+        showMessage('Registration successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = 'user_login.html';
+        }, 1500);
+
+      } catch (err) {
+        console.error('Error:', err);
+        showMessage('Connection error: ' + err.message, 'error');
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.textContent = 'Register';
+      }
+    });
+
+    function showMessage(text, type) {
+      statusMessage.textContent = text;
+      statusMessage.className = `message ${type}`;
+    }
+  </script>
+</body>
+</html>

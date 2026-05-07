@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Register - HorrorVerse</title>
+
+  <style>
+    /* Reset & base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Overlay for spooky blur */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(3px);
+      z-index: 0;
+    }
+
+    /* Container */
+    .register-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(20, 0, 0, 0.8);
+      padding: 50px 40px;
+      border-radius: 20px;
+      border: 2px solid crimson;
+      box-shadow: 0 0 30px crimson;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 1s ease;
+    }
+    .register-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 40px crimson;
+    }
+
+    h2 {
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    /* Form styling */
+    .register-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    label {
+      text-align: left;
+      font-weight: bold;
+      color: #ddd;
+      margin-bottom: 5px;
+    }
+
+    input, textarea, select {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #ff4444;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: crimson;
+      box-shadow: 0 0 8px crimson;
+      background: rgba(255,255,255,0.1);
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .field-row input {
+      flex: 1;
+    }
+    .show-pass {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      color: #ddd;
+      transition: color 0.3s;
+    }
+    .show-pass:hover {
+      color: #fff;
+    }
+
+    button[type="submit"] {
+      background: rgba(255,68,68,0.8);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+      transform: translateY(-2px);
+    }
+
+    #error, #success {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+    #error { color: #ff4444; }
+    #success { color: #2ecc71; }
+
+    p {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    a {
+      color: #ff4444;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    a:hover {
+      text-decoration: underline;
+      color: #fff;
+    }
+
+    /* Password validation */
+    #password-requirements {
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 5px;
+      font-size: 13px;
+      color: #ddd;
+    }
+    .requirement {
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #ff4444;
+    }
+    .requirement.valid {
+      color: #2ecc71;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h2>Admin Sign Up</h2>
+    <form id="signupForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" required>
+
+      <label for="location">Location:</label>
+      <input type="text" id="location" placeholder="Enter your location (optional)">
+
+      <label for="password">Password:</label>
+      <div class="field-row">
+        <input type="password" id="password" placeholder="Enter password" required>
+        <button type="button" class="show-pass" id="togglePassword">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.238-5-5s2.239-5 5-5 5 2.238 5 5-2.239 5-5 5zm0-8c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z"/>
+          </svg>
+        </button>
+      </div>
+      <div id="password-requirements">
+        <div id="length" class="requirement">• 8-15 characters</div>
+        <div id="letter" class="requirement">• At least one letter</div>
+        <div id="digit" class="requirement">• At least one number</div>
+        <div id="special" class="requirement">• At least one special character</div>
+      </div>
+
+      <label for="confirmPassword">Confirm Password:</label>
+      <div class="field-row">
+        <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+        <button type="button" class="show-pass" id="toggleConfirm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.238-5-5s2.239-5 5-5 5 2.238 5 5-2.239 5-5 5zm0-8c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z"/>
+          </svg>
+        </button>
+      </div>
+      <span id="matchMsg"></span>
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p id="error"></p>
+    <p id="success"></p>
+
+    <p>Already have an account? <a href="admin_login.html">Login</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirm = document.getElementById('toggleConfirm');
+    const length = document.getElementById('length');
+    const letter = document.getElementById('letter');
+    const digit = document.getElementById('digit');
+    const special = document.getElementById('special');
+    const matchMsg = document.getElementById('matchMsg');
+    const error = document.getElementById('error');
+    const success = document.getElementById('success');
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&\-\_\+\=<>.,;:])[A-Za-z\d@$!%*#?&\-\_\+\=<>.,;:]{8,15}$/;
+
+    togglePassword.addEventListener('click', () => {
+      password.type = password.type === 'password' ? 'text' : 'password';
+    });
+
+    toggleConfirm.addEventListener('click', () => {
+      confirmPassword.type = confirmPassword.type === 'password' ? 'text' : 'password';
+    });
+
+    password.addEventListener('input', (e) => {
+      const val = e.target.value;
+      length.classList.toggle('valid', val.length >= 8 && val.length <= 15);
+      length.classList.toggle('invalid', !(val.length >= 8 && val.length <= 15));
+      letter.classList.toggle('valid', /[A-Za-z]/.test(val));
+      letter.classList.toggle('invalid', !/[A-Za-z]/.test(val));
+      digit.classList.toggle('valid', /\d/.test(val));
+      digit.classList.toggle('invalid', !/\d/.test(val));
+      special.classList.toggle('valid', /[@$!%*#?&\-\_\+\=<>.,;:]/.test(val));
+      special.classList.toggle('invalid', !/[@$!%*#?&\-\_\+\=<>.,;:]/.test(val));
+      checkMatch();
+    });
+
+    confirmPassword.addEventListener('input', checkMatch);
+
+    function checkMatch() {
+      if (!confirmPassword.value) {
+        matchMsg.textContent = '';
+        return;
+      }
+      matchMsg.textContent = password.value === confirmPassword.value ? 'Passwords match ✓' : 'Passwords do not match';
+      matchMsg.style.color = password.value === confirmPassword.value ? '#2ecc71' : '#ff4d4d';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.textContent = '';
+      success.textContent = '';
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const dob = document.getElementById('dob').value;
+      const location = document.getElementById('location').value.trim();
+      const pass = password.value;
+
+      if (!name || !email || !pass || !confirmPassword.value || !dob) {
+        error.textContent = 'Please fill all required fields.';
+        return;
+      }
+
+      if (!passwordRegex.test(pass)) {
+        error.textContent = 'Password must be 8-15 chars with letter, number & special.';
+        return;
+      }
+
+      if (pass !== confirmPassword.value) {
+        error.textContent = 'Passwords must match.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password: pass, dob, location, role: 'admin' })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        if (data.role !== 'admin') {
+          throw new Error('Failed to register as admin');
+        }
+
+        success.textContent = 'Registration successful! Redirecting to login...';
+
+        setTimeout(() => {
+          window.location.href = 'admin_login.html';
+        }, 1500);
+
+      } catch (err) {
+        error.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

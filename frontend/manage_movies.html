@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Movies - HorrorVerse Admin</title>
+<style>
+    body {
+        background: #000;
+        color: white;
+        font-family: 'Cinzel', serif;
+        padding: 40px;
+    }
+    h1 {
+        color: crimson;
+        text-shadow: 0 0 10px crimson;
+        margin-bottom: 20px;
+    }
+    .form-container {
+        background: rgba(20,0,0,0.8);
+        padding: 20px;
+        border: 2px solid crimson;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    input, select, button {
+        padding: 10px;
+        margin: 8px;
+        border-radius: 5px;
+    }
+    button {
+        background: crimson;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: darkred;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 2px solid crimson;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid crimson;
+    }
+    th {
+        background: rgba(200,0,0,0.6);
+    }
+</style>
+</head>
+<body>
+
+<h1>Manage Movies</h1>
+
+<div class="form-container">
+    <h2>Add Movie</h2>
+    <input type="text" id="movieTitle" placeholder="Movie Title">
+    <input type="number" id="movieYear" placeholder="Year">
+    <select id="movieGenre">
+        <option>Horror</option>
+        <option>Thriller</option>
+        <option>Psychological</option>
+        <option>Supernatural</option>
+    </select>
+    <button onclick="addMovie()">Add Movie</button>
+</div>
+
+<h2>Movie List</h2>
+<table id="movieTable">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Genre</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+let movieId = 1;
+
+function addMovie() {
+    const title = document.getElementById("movieTitle").value;
+    const year = document.getElementById("movieYear").value;
+    const genre = document.getElementById("movieGenre").value;
+
+    if (!title || !year) {
+        alert("Please fill in all fields!");
+        return;
+    }
+
+    const table = document.querySelector("#movieTable tbody");
+    const row = document.createElement("tr");
+    const id = "movie" + movieId++;
+
+    row.id = id;
+    row.innerHTML = `
+        <td>${title}</td>
+        <td>${year}</td>
+        <td>${genre}</td>
+        <td>
+            <a href="#" onclick="editMovie('${id}')">Edit</a> |
+            <a href="#" onclick="deleteMovie('${id}')">Delete</a>
+        </td>
+    `;
+
+    table.appendChild(row);
+
+    document.getElementById("movieTitle").value = "";
+    document.getElementById("movieYear").value = "";
+}
+
+function deleteMovie(id) {
+    if (confirm("Delete this movie?")) {
+        document.getElementById(id).remove();
+    }
+}
+
+function editMovie(id) {
+    const row = document.getElementById(id).children;
+
+    const title = prompt("Edit title:", row[0].innerText);
+    const year = prompt("Edit year:", row[1].innerText);
+    const genre = prompt("Edit genre:", row[2].innerText);
+
+    if (title) row[0].innerText = title;
+    if (year) row[1].innerText = year;
+    if (genre) row[2].innerText = genre;
+}
+</script>
+
+</body>
+</html>

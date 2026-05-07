@@ -1,0 +1,784 @@
+<script>const isAdmin = false;</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friends - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+<script src="sidebar.js" defer></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                  url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920') center/cover fixed;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+  
+
+    .friends-container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      text-align: center;
+      background: rgba(20,0,0,0.95);
+      padding: 40px;
+      border: 3px solid #dc143c;
+      border-radius: 25px;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.6);
+      margin-bottom: 40px;
+      animation: slideDown 0.8s;
+    }
+
+    .page-header h1 {
+      font-size: 3.5rem;
+      color: #ff4444;
+      text-shadow: 0 0 30px #dc143c;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 25px;
+    }
+
+    .search-friends {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search-friends input {
+      flex: 1;
+      padding: 15px 20px;
+      border-radius: 15px;
+      border: 2px solid #dc143c;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      outline: none;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .search-friends input:focus {
+      border-color: #ff4444;
+      box-shadow: 0 0 20px rgba(220,20,60,0.5);
+    }
+
+    .search-friends button {
+      padding: 15px 30px;
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      background: #dc143c;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-friends button:hover {
+      background: #ff4444;
+      box-shadow: 0 0 25px #dc143c;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .tabs button {
+      padding: 12px 28px;
+      border: 2px solid #dc143c;
+      border-radius: 25px;
+      background: rgba(220,20,60,0.2);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      position: relative;
+    }
+
+    .tabs button:hover,
+    .tabs button.active {
+      background: #dc143c;
+      box-shadow: 0 0 20px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff4444;
+      color: #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      box-shadow: 0 3px 10px rgba(220,20,60,0.6);
+    }
+
+    .section {
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.5);
+      padding: 35px;
+      margin-bottom: 40px;
+      animation: fadeIn 1s;
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section h2 {
+      color: #ff4444;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 15px #dc143c;
+    }
+
+    .friends-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .friend-card {
+      background: rgba(30,0,0,0.95);
+      border: 2px solid rgba(220,20,60,0.5);
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .friend-card:hover {
+      transform: translateY(-8px);
+      border-color: #dc143c;
+      box-shadow: 0 10px 40px rgba(220,20,60,0.6);
+    }
+
+    .friend-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #dc143c;
+      margin: 0 auto 20px;
+      object-fit: cover;
+      box-shadow: 0 5px 25px rgba(220,20,60,0.5);
+      transition: transform 0.3s;
+    }
+
+    .friend-card:hover .friend-avatar {
+      transform: scale(1.1);
+    }
+
+    .friend-name {
+      color: #ff6666;
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .friend-status {
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .online-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #2ecc71;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    .offline-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #888;
+      margin-right: 8px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        opacity: 1; 
+        box-shadow: 0 0 10px #2ecc71;
+      }
+      50% { 
+        opacity: 0.5; 
+        box-shadow: 0 0 5px #2ecc71;
+      }
+    }
+
+    .friend-stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      padding: 15px 0;
+      border-top: 2px solid rgba(220,20,60,0.3);
+      border-bottom: 2px solid rgba(220,20,60,0.3);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      color: #ff4444;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .friend-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .friend-actions button {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 15px;
+      border: 2px solid #dc143c;
+      border-radius: 10px;
+      background: rgba(220,20,60,0.3);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .friend-actions button:hover {
+      background: #dc143c;
+      box-shadow: 0 0 15px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    .btn-accept {
+      background: rgba(46,204,113,0.5);
+      border-color: #2ecc71;
+    }
+
+    .btn-accept:hover {
+      background: #2ecc71;
+      box-shadow: 0 0 15px #2ecc71;
+    }
+
+    .btn-decline {
+      background: rgba(231,76,60,0.5);
+      border-color: #e74c3c;
+    }
+
+    .btn-decline:hover {
+      background: #e74c3c;
+      box-shadow: 0 0 15px #e74c3c;
+    }
+
+    .btn-remove {
+      background: rgba(231,76,60,0.3);
+      border-color: #e74c3c;
+    }
+
+    .btn-remove:hover {
+      background: #e74c3c;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(20,0,0,0.95);
+      border-top: 3px solid #dc143c;
+      box-shadow: 0 -5px 30px rgba(220,20,60,0.3);
+      color: #888;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { 
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 2.5rem;
+      }
+
+      .friends-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+
+  <div class="friends-container">
+    <div class="page-header">
+      <h1>Friends & Connections</h1>
+      <p>Connect with fellow horror enthusiasts</p>
+      <div class="search-friends">
+        <input type="text" placeholder="Search for friends by username or email..." id="searchInput">
+        <button onclick="searchFriends()">Search</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="active" onclick="showTab('all')" data-tab="all">All Friends</button>
+      <button onclick="showTab('requests')" data-tab="requests">
+        Pending Requests
+        <span class="badge" id="requestsBadge">3</span>
+      </button>
+      <button onclick="showTab('suggestions')" data-tab="suggestions">Suggestions</button>
+      <button onclick="showTab('online')" data-tab="online">Online Now</button>
+    </div>
+
+    <div class="section active" id="allSection">
+      <h2>Your Friends (<span id="friendCount">6</span>)</h2>
+      <div class="friends-grid" id="allFriendsGrid"></div>
+    </div>
+
+    <div class="section" id="requestsSection">
+      <h2>Friend Requests (<span id="requestCount">3</span>)</h2>
+      <div class="friends-grid" id="requestsGrid"></div>
+    </div>
+
+    <div class="section" id="suggestionsSection">
+      <h2>Friend Suggestions</h2>
+      <div class="friends-grid" id="suggestionsGrid"></div>
+    </div>
+
+    <div class="section" id="onlineSection">
+      <h2>Friends Online Now (<span id="onlineCount">4</span>)</h2>
+      <div class="friends-grid" id="onlineGrid"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 HorrorVerse | All Rights Reserved | Dive into the darkness</p>
+  </footer>
+
+  <script>
+    const friendsData = [
+      {
+        id: 1,
+        name: "HorrorFan92",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&fit=crop",
+        status: "online",
+        activity: 'Watching "The Ritual"',
+        movies: 143,
+        reviews: 89,
+        friends: 267,
+        type: "friend"
+      },
+      {
+        id: 2,
+        name: "CinematicSpooks",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&fit=crop",
+        status: "online",
+        activity: "In lobby",
+        movies: 98,
+        reviews: 45,
+        friends: 178,
+        type: "friend"
+      },
+      {
+        id: 3,
+        name: "GothicDreamer",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&fit=crop",
+        status: "offline",
+        activity: "Last seen 2 hours ago",
+        movies: 76,
+        reviews: 32,
+        friends: 134,
+        type: "friend"
+      },
+      {
+        id: 4,
+        name: "ScreamQueen",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&fit=crop",
+        status: "online",
+        activity: "Browsing movies",
+        movies: 112,
+        reviews: 58,
+        friends: 198,
+        type: "friend"
+      },
+      {
+        id: 5,
+        name: "VintageHorror",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&fit=crop",
+        status: "online",
+        activity: "Writing review",
+        movies: 89,
+        reviews: 41,
+        friends: 145,
+        type: "friend"
+      },
+      {
+        id: 6,
+        name: "NightStalker",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&fit=crop",
+        status: "offline",
+        activity: "Last seen yesterday",
+        movies: 156,
+        reviews: 72,
+        friends: 201,
+        type: "friend"
+      }
+    ];
+
+    const requestsData = [
+      {
+        id: 7,
+        name: "DarkSoulCollector",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&fit=crop",
+        activity: "Wants to connect with you",
+        movies: 87,
+        reviews: 34,
+        friends: 156,
+        type: "request"
+      },
+      {
+        id: 8,
+        name: "NightmareEnthusiast",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&fit=crop",
+        activity: "Wants to connect with you",
+        movies: 124,
+        reviews: 67,
+        friends: 203,
+        type: "request"
+      },
+      {
+        id: 9,
+        name: "HauntedCinephile",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&fit=crop",
+        activity: "Wants to connect with you",
+        movies: 56,
+        reviews: 23,
+        friends: 89,
+        type: "request"
+      }
+    ];
+
+    const suggestionsData = [
+      {
+        id: 10,
+        name: "TerrorTales",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&fit=crop",
+        activity: "5 mutual friends",
+        movies: 112,
+        reviews: 58,
+        friends: 198,
+        type: "suggestion"
+      },
+      {
+        id: 11,
+        name: "BloodMoonRising",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&fit=crop",
+        activity: "3 mutual friends",
+        movies: 89,
+        reviews: 41,
+        friends: 145,
+        type: "suggestion"
+      }
+    ];
+
+    function renderFriends() {
+      const allGrid = document.getElementById('allFriendsGrid');
+      allGrid.innerHTML = friendsData.map(friend => createFriendCard(friend, 'friend')).join('');
+      document.getElementById('friendCount').textContent = friendsData.length;
+      updateOnlineCount();
+    }
+
+    function renderRequests() {
+      const requestsGrid = document.getElementById('requestsGrid');
+      requestsGrid.innerHTML = requestsData.map(friend => createFriendCard(friend, 'request')).join('');
+      document.getElementById('requestCount').textContent = requestsData.length;
+      document.getElementById('requestsBadge').textContent = requestsData.length;
+    }
+
+    function renderSuggestions() {
+      const suggestionsGrid = document.getElementById('suggestionsGrid');
+      suggestionsGrid.innerHTML = suggestionsData.map(friend => createFriendCard(friend, 'suggestion')).join('');
+    }
+
+    function renderOnline() {
+      const onlineGrid = document.getElementById('onlineGrid');
+      const onlineFriends = friendsData.filter(f => f.status === 'online');
+      onlineGrid.innerHTML = onlineFriends.map(friend => createFriendCard(friend, 'friend')).join('');
+    }
+
+    function createFriendCard(friend, type) {
+      const statusIndicator = friend.status === 'online' ? 
+        `<span class="online-indicator"></span>` : 
+        `<span class="offline-indicator"></span>`;
+      
+      let actions = '';
+      
+      if (type === 'friend') {
+        actions = `
+          <button onclick="viewProfile(${friend.id})">Profile</button>
+          <button onclick="sendMessage(${friend.id})">Message</button>
+          <button class="btn-remove" onclick="removeFriend(${friend.id})">Remove</button>
+        `;
+      } else if (type === 'request') {
+        actions = `
+          <button class="btn-accept" onclick="acceptRequest(${friend.id})">Accept</button>
+          <button class="btn-decline" onclick="declineRequest(${friend.id})">Decline</button>
+        `;
+      } else if (type === 'suggestion') {
+        actions = `
+          <button onclick="viewProfile(${friend.id})">Profile</button>
+          <button class="btn-accept" onclick="addFriend(${friend.id})">Add Friend</button>
+        `;
+      }
+
+      return `
+        <div class="friend-card" data-id="${friend.id}">
+          <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar">
+          <div class="friend-name">
+            ${type === 'friend' && friend.status ? statusIndicator : ''}
+            ${friend.name}
+          </div>
+          <div class="friend-status">${friend.activity}</div>
+          <div class="friend-stats">
+            <div class="stat-item">
+              <div class="stat-value">${friend.movies}</div>
+              <div class="stat-label">Movies</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${friend.reviews}</div>
+              <div class="stat-label">Reviews</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${friend.friends}</div>
+              <div class="stat-label">Friends</div>
+            </div>
+          </div>
+          <div class="friend-actions">
+            ${actions}
+          </div>
+        </div>
+      `;
+    }
+
+    function acceptRequest(id) {
+      const request = requestsData.find(r => r.id === id);
+      const index = requestsData.findIndex(r => r.id === id);
+      
+      if (index > -1) {
+        request.type = 'friend';
+        request.status = 'online';
+        request.activity = 'Just added!';
+        friendsData.push(request);
+        requestsData.splice(index, 1);
+        
+        renderFriends();
+        renderRequests();
+        renderOnline();
+        showNotification(`You are now friends with ${request.name}!`, '#2ecc71');
+      }
+    }
+
+    function declineRequest(id) {
+      const request = requestsData.find(r => r.id === id);
+      const index = requestsData.findIndex(r => r.id === id);
+      
+      if (index > -1) {
+        requestsData.splice(index, 1);
+        renderRequests();
+        showNotification(`Friend request from ${request.name} declined`, '#e74c3c');
+      }
+    }
+
+    function addFriend(id) {
+      const suggestion = suggestionsData.find(s => s.id === id);
+      const index = suggestionsData.findIndex(s => s.id === id);
+      
+      if (index > -1) {
+        suggestionsData.splice(index, 1);
+        renderSuggestions();
+        showNotification(`Friend request sent to ${suggestion.name}!`, '#3498db');
+      }
+    }
+
+    function removeFriend(id) {
+      const friend = friendsData.find(f => f.id === id);
+      
+      if (confirm(`Are you sure you want to remove ${friend.name} from your friends?`)) {
+        const index = friendsData.findIndex(f => f.id === id);
+        if (index > -1) {
+          friendsData.splice(index, 1);
+          renderFriends();
+          renderOnline();
+          showNotification(`${friend.name} removed from friends`, '#e74c3c');
+        }
+      }
+    }
+
+    function viewProfile(id) {
+      const allPeople = [...friendsData, ...requestsData, ...suggestionsData];
+      const person = allPeople.find(p => p.id === id);
+      
+      if (person) {
+        showNotification('Opening profile...', '#9b59b6');
+        // Store the profile data in sessionStorage for the profile page to read
+        sessionStorage.setItem('viewProfile', JSON.stringify({
+          id: person.id,
+          name: person.name,
+          avatar: person.avatar,
+          status: person.status || 'offline'
+        }));
+        setTimeout(() => {
+          window.location.href = `friendprofile.html?id=${id}`;
+        }, 1000);
+      }
+    }
+
+    function sendMessage(id) {
+      const friend = friendsData.find(f => f.id === id);
+      if (friend) {
+        showNotification(`Opening chat with ${friend.name}...`, '#3498db');
+        // Store friend data for messages page
+        sessionStorage.setItem('chatWith', JSON.stringify({
+          id: friend.id,
+          name: friend.name,
+          avatar: friend.avatar,
+          status: friend.status
+        }));
+        setTimeout(() => {
+          window.location.href = 'messages.html';
+        }, 1000);
+      }
+    }
+
+    function searchFriends() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      
+      if (!query) {
+        showNotification('Please enter a search term', '#e74c3c');
+        return;
+      }
+
+      const allPeople = [...friendsData, ...requestsData, ...suggestionsData];
+      const results = allPeople.filter(p => 
+        p.name.toLowerCase().includes(query)
+      );
+
+      if (results.length === 0) {
+        showNotification(`No users found matching "${query}"`, '#e74c3c');
+      } else {
+        showNotification(`Found ${results.length} user(s) matching "${query}"`, '#2ecc71');
+      }
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      
+      document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+      
+      if (tab === 'all') {
+        document.getElementById('allSection').classList.add('active');
+      } else if (tab === 'requests') {
+        document.getElementById('requestsSection').classList.add('active');
+      } else if (tab === 'suggestions') {
+        document.getElementById('suggestionsSection').classList.add('active');
+      } else if (tab === 'online') {
+        document.getElementById('onlineSection').classList.add('active');
+      }
+      
+      showNotification(`Showing ${tab} view`, '#3498db');
+    }
+
+    function updateOnlineCount() {
+      const onlineCount = friendsData.filter(f => f.status === 'online').length;
+      document.getElementById('onlineCount').textContent = onlineCount;
+    }
+
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background: ${color};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        z-index: 1000;
+        font-weight: bold;
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(() => notification.remove(), 300);
+      }, 2500);
+    }
+
+    renderFriends();
+    renderRequests();
+    renderSuggestions();
+    renderOnline();
+  </script>
+</body>
+</html>

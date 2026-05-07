@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Profile - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cinzel', serif; }
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+      position: relative;
+    }
+    body::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(3px); z-index: 0;
+    }
+    .container {
+      max-width: 600px; margin: 120px auto 50px; padding: 50px;
+      background: rgba(20,0,0,0.92); border: 3px solid crimson;
+      border-radius: 20px; box-shadow: 0 0 40px rgba(220,20,60,0.8);
+      text-align: center; position: relative; z-index: 1;
+    }
+    h1 {
+      font-size: 3rem; color: #ff4444;
+      text-shadow: 0 0 25px crimson; margin-bottom: 40px;
+    }
+    .info {
+      font-size: 1.3rem; margin: 25px 0;
+    }
+    .label {
+      color: #ff6666; font-weight: bold;
+    }
+    .value {
+      color: #fff; margin-left: 10px;
+    }
+    .loading {
+      font-size: 1.6rem; padding: 80px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">Menu</button>
+  <div class="logo" onclick="window.location.href='user_home.html'">HorrorVerse</div>
+</nav>
+
+<div class="container">
+  <h1>Your Profile</h1>
+
+  <div id="loading" class="loading">Loading your details...</div>
+
+  <div id="profileInfo" style="display:none;">
+    <div class="info">
+      <span class="label">Name:</span>
+      <span class="value" id="name"></span>
+    </div>
+    <div class="info">
+      <span class="label">Email:</span>
+      <span class="value" id="email"></span>
+    </div>
+    <div class="info">
+      <span class="label">Date of Birth:</span>
+      <span class="value" id="dob"></span>
+    </div>
+    <div class="info">
+      <span class="label">Bio/Location:</span>
+      <span class="value" id="location"></span>
+    </div>
+    <div class="info">
+      <span class="label">Role:</span>
+      <span class="value" id="role"></span>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center; padding:20px; background:rgba(0,0,0,0.8); margin-top:50px;">
+  © 2025 HorrorVerse | All Rights Reserved
+</footer>
+
+<script src="sidebar.js"></script>
+<script>
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first!');
+    window.location.href = 'user_login.html';
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch('/api/user/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!res.ok) throw new Error('Failed to load profile');
+
+      const data = await res.json();
+
+      document.getElementById('name').textContent = data.name || 'Not set';
+      document.getElementById('email').textContent = data.email;
+      document.getElementById('dob').textContent = data.dob ? new Date(data.dob).toLocaleDateString() : 'Not set';
+      document.getElementById('location').textContent = data.location || 'Not set';
+      document.getElementById('role').textContent = (data.role || 'user').charAt(0).toUpperCase() + (data.role || 'user').slice(1);
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('profileInfo').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('loading').textContent = 'Error loading profile. Please try again later.';
+    }
+  }
+
+  loadProfile();
+</script>
+</body>
+</html>

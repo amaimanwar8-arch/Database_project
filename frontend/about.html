@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - HorrorVerse</title>
+
+  <style>
+    /* Reset & base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Fog overlay */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(3px);
+      z-index: 0;
+      animation: subtleFog 20s linear infinite;
+    }
+
+    @keyframes subtleFog {
+      0% { background-position: 0 0; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0 0; }
+    }
+    /* Navbar */
+    .navbar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(20,0,0,0.85);
+      border-bottom: 2px solid crimson;
+      box-shadow: 0 0 15px crimson;
+    }
+    /* Container */
+    .about-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(20,0,0,0.85);
+      padding: 50px 40px;
+      border-radius: 20px;
+      border: 2px solid crimson;
+      box-shadow: 0 0 30px crimson;
+      max-width: 800px;
+      text-align: left;
+      animation: fadeInUp 1s ease;
+    }
+
+    h1 {
+      color: #ff4444;
+      text-shadow: 0 0 15px crimson;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 3rem;
+    }
+
+    h2 {
+      color: #ff6666;
+      text-shadow: 0 0 10px crimson;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    ul {
+      margin-left: 20px;
+      list-style: none;
+    }
+
+    ul li {
+      position: relative;
+      margin-bottom: 12px;
+      padding-left: 20px;
+      color: #ccc;
+    }
+
+    ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: crimson;
+      font-size: 1.2rem;
+    }
+
+    a {
+      color: #ff4444;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      border: 1px solid crimson;
+      border-radius: 8px;
+      color: #fff;
+      background: rgba(220,20,60,0.3);
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+    }
+  </style>
+</head>
+<body>
+  <div class="about-container">
+    <h1>About HorrorVerse 🎥</h1>
+    <p>Welcome to <strong>HorrorVerse</strong>, the ultimate destination for fans of chilling cinema. Our platform immerses you into a world where every film tells a haunting story and every shadow hides a secret.</p>
+
+    <h2>What We Offer</h2>
+    <ul>
+      <li>Curated collection of horror films from around the world</li>
+      <li>User accounts for personalized watchlists</li>
+      <li>Admin panel for film management and content updates</li>
+      <li>Interactive experience with film ratings and reviews</li>
+      <li>Regular updates with the latest and classic horror movies</li>
+    </ul>
+
+    <h2>Our Vision</h2>
+    <p>We aim to be the go-to hub for horror enthusiasts, combining cinematic art with a spooky immersive experience. Our goal is to create a community where fans can explore, share, and celebrate the genre.</p>
+
+    <h2>Join Us</h2>
+    <p>Dive deep into HorrorVerse and discover the shadows of cinema. Whether you're a casual viewer or a hardcore horror aficionado, HorrorVerse has something to thrill your senses.</p>
+
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
+  </div>
+</body>
+</html>

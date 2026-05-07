@@ -1,0 +1,2322 @@
+<script>const isAdmin = false;</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events & Watch Parties - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+<script src="sidebar.js" defer></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                  url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920') center/cover fixed;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Spooky Cursor Trail */
+    .cursor-trail {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #dc143c;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      animation: trailFade 0.5s ease-out;
+    }
+
+    @keyframes trailFade {
+      from { opacity: 0.8; transform: scale(1); }
+      to { opacity: 0; transform: scale(0); }
+    }
+
+    /* Spider Web Decorations */
+    .spider-web {
+      position: fixed;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .web-top-left {
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+      background: 
+        linear-gradient(135deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        linear-gradient(45deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        radial-gradient(circle at top left, transparent 20%, rgba(200,200,200,0.2) 21%, transparent 22%),
+        radial-gradient(circle at top left, transparent 40%, rgba(200,200,200,0.2) 41%, transparent 42%),
+        radial-gradient(circle at top left, transparent 60%, rgba(200,200,200,0.2) 61%, transparent 62%);
+    }
+
+    .web-top-right {
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 350px;
+      background: 
+        linear-gradient(-135deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        radial-gradient(circle at top right, transparent 20%, rgba(200,200,200,0.2) 21%, transparent 22%),
+        radial-gradient(circle at top right, transparent 40%, rgba(200,200,200,0.2) 41%, transparent 42%),
+        radial-gradient(circle at top right, transparent 60%, rgba(200,200,200,0.2) 61%, transparent 62%);
+    }
+
+    .web-bottom-left {
+      bottom: 0;
+      left: 0;
+      width: 300px;
+      height: 300px;
+      background: 
+        linear-gradient(45deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        linear-gradient(135deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        radial-gradient(circle at bottom left, transparent 25%, rgba(200,200,200,0.2) 26%, transparent 27%),
+        radial-gradient(circle at bottom left, transparent 50%, rgba(200,200,200,0.2) 51%, transparent 52%);
+    }
+
+    .web-bottom-right {
+      bottom: 80px;
+      right: 380px;
+      width: 250px;
+      height: 250px;
+      background: 
+        linear-gradient(-45deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        linear-gradient(-135deg, transparent 48%, rgba(200,200,200,0.3) 49%, rgba(200,200,200,0.3) 51%, transparent 52%),
+        radial-gradient(circle at bottom right, transparent 30%, rgba(200,200,200,0.2) 31%, transparent 32%);
+    }
+
+    /* Hanging Spider */
+    .spider {
+      position: fixed;
+      top: -30px;
+      right: 15%;
+      z-index: 1000;
+      animation: spiderDrop 5s ease-in-out infinite;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .spider:hover {
+      animation-play-state: paused;
+      transform: rotate(360deg) scale(1.5);
+    }
+
+    .spider-body {
+      width: 20px;
+      height: 20px;
+      background: #000;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255,0,0,0.5);
+    }
+
+    .spider-body::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to bottom, rgba(200,200,200,0.5), transparent);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .spider-legs {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .spider-leg {
+      position: absolute;
+      width: 15px;
+      height: 2px;
+      background: #000;
+      top: 50%;
+      left: 50%;
+    }
+
+    .spider-leg:nth-child(1) { transform: rotate(45deg) translateX(-10px); }
+    .spider-leg:nth-child(2) { transform: rotate(-45deg) translateX(-10px); }
+    .spider-leg:nth-child(3) { transform: rotate(135deg) translateX(-10px); }
+    .spider-leg:nth-child(4) { transform: rotate(-135deg) translateX(-10px); }
+
+    /* Crawling Spiders */
+    .crawling-spider {
+      position: fixed;
+      font-size: 1.8rem;
+      z-index: 999;
+      opacity: 0.7;
+      cursor: pointer;
+      transition: all 0.3s;
+      filter: drop-shadow(0 0 3px rgba(0,0,0,0.8));
+    }
+
+    .crawling-spider:hover {
+      opacity: 1;
+      transform: scale(1.3);
+    }
+
+    /* Spider 1 - Crawls from bottom left to right */
+    .crawling-spider-1 {
+      bottom: 50px;
+      left: 0;
+      animation: crawlBottomLeftToRight 25s linear infinite;
+    }
+
+    /* Spider 2 - Crawls from left side up and down */
+    .crawling-spider-2 {
+      left: 30px;
+      top: 100%;
+      animation: crawlLeftSide 30s linear infinite;
+    }
+
+    @keyframes crawlBottomLeftToRight {
+      0% { 
+        left: -50px; 
+        bottom: 50px;
+        transform: scaleX(1) rotate(0deg);
+      }
+      25% { 
+        left: 25%; 
+        bottom: 80px;
+        transform: scaleX(1) rotate(5deg);
+      }
+      50% { 
+        left: 50%; 
+        bottom: 50px;
+        transform: scaleX(1) rotate(-5deg);
+      }
+      75% { 
+        left: 75%; 
+        bottom: 100px;
+        transform: scaleX(-1) rotate(5deg);
+      }
+      100% { 
+        left: 100%; 
+        bottom: 50px;
+        transform: scaleX(-1) rotate(0deg);
+      }
+    }
+
+    @keyframes crawlLeftSide {
+      0% { 
+        top: 100%; 
+        left: 30px;
+        transform: rotate(90deg);
+      }
+      25% {
+        top: 75%;
+        left: 50px;
+        transform: rotate(100deg);
+      }
+      50% { 
+        top: 50%; 
+        left: 30px;
+        transform: rotate(90deg);
+      }
+      75% {
+        top: 25%;
+        left: 50px;
+        transform: rotate(80deg);
+      }
+      100% { 
+        top: -50px; 
+        left: 30px;
+        transform: rotate(90deg);
+      }
+    }
+
+    @keyframes spiderDrop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(150px); }
+    }
+
+    /* Blood Drip Effect */
+    .blood-drip {
+      position: fixed;
+      top: 0;
+      width: 2px;
+      height: 0;
+      background: linear-gradient(to bottom, #8b0000, #dc143c);
+      animation: drip 3s ease-in infinite;
+      opacity: 0.7;
+    }
+
+    .blood-drip:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .blood-drip:nth-child(2) { left: 30%; animation-delay: 1s; }
+    .blood-drip:nth-child(3) { left: 50%; animation-delay: 2s; }
+    .blood-drip:nth-child(4) { left: 70%; animation-delay: 0.5s; }
+    .blood-drip:nth-child(5) { left: 90%; animation-delay: 1.5s; }
+
+    @keyframes drip {
+      0% { height: 0; top: 0; }
+      50% { height: 100px; }
+      100% { height: 0; top: 100px; }
+    }
+
+    /* Bats Flying */
+    .bat {
+      position: fixed;
+      font-size: 2rem;
+      opacity: 0.2;
+      animation: flyBat 12s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .bat:nth-child(1) { top: 20%; animation-delay: 0s; }
+    .bat:nth-child(2) { top: 40%; animation-delay: 4s; }
+    .bat:nth-child(3) { top: 60%; animation-delay: 8s; }
+
+    @keyframes flyBat {
+      0% { left: -50px; transform: scaleX(1); }
+      45% { transform: scaleX(1); }
+      50% { transform: scaleX(-1); }
+      100% { left: 110%; transform: scaleX(-1); }
+    }
+
+    /* Music Player */
+    .music-player {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(20,0,0,0.98);
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(220,20,60,0.7);
+      z-index: 1000;
+      width: 320px;
+      animation: slideInMusic 0.5s;
+      display: none;
+    }
+
+    .music-player.minimized {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .music-player.minimized .music-content {
+      display: none;
+    }
+
+    .music-player.minimized .minimize-icon {
+      display: block;
+      font-size: 2.5rem;
+    }
+
+    .minimize-icon {
+      display: none;
+    }
+
+    @keyframes slideInMusic {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .music-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .music-title {
+      color: #ff4444;
+      font-size: 1.1rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .minimize-music {
+      background: none;
+      border: none;
+      color: #f1c40f;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 5px;
+    }
+
+    .minimize-music:hover {
+      transform: scale(1.2);
+      color: #fff;
+    }
+
+    .close-music {
+      background: none;
+      border: none;
+      color: #ff4444;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .close-music:hover {
+      transform: rotate(90deg);
+      color: #fff;
+    }
+
+    .music-track {
+      background: rgba(220,20,60,0.2);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      display: none;
+    }
+
+    .music-track.active-track {
+      display: block;
+    }
+
+    .music-track:hover {
+      background: rgba(220,20,60,0.4);
+      border-color: #dc143c;
+      transform: translateX(5px);
+    }
+
+    .music-track.playing {
+      border-color: #2ecc71;
+      background: rgba(46,204,113,0.2);
+      animation: pulse 1.5s infinite;
+    }
+
+    .track-name {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 5px;
+    }
+
+    .track-artist {
+      color: #888;
+      font-size: 0.8rem;
+    }
+
+    .music-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .music-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #dc143c;
+      border-radius: 10px;
+      background: rgba(220,20,60,0.3);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+
+    .music-btn:hover {
+      background: #dc143c;
+      transform: scale(1.1);
+    }
+
+    .volume-control {
+      margin-top: 15px;
+    }
+
+    .volume-slider {
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(220,20,60,0.3);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #dc143c;
+      cursor: pointer;
+    }
+
+
+
+    .events-container {
+      max-width: 1600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-header {
+      text-align: center;
+      background: rgba(20,0,0,0.95);
+      padding: 50px 40px;
+      border: 3px solid #dc143c;
+      border-radius: 25px;
+      box-shadow: 0 10px 60px rgba(220,20,60,0.6);
+      margin-bottom: 40px;
+      animation: slideDown 0.8s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(220,20,60,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .page-header h1 {
+      font-size: 3.8rem;
+      color: #ff4444;
+      text-shadow: 0 0 35px #dc143c;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      animation: textGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 35px #dc143c; }
+      50% { text-shadow: 0 0 50px #dc143c, 0 0 70px #ff4444; }
+    }
+
+    .page-header p {
+      font-size: 1.3rem;
+      color: #ccc;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 15px 25px;
+      background: rgba(220,20,60,0.2);
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      transition: all 0.3s;
+      animation: statPop 0.5s ease-out backwards;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 0.1s; }
+    .stat-item:nth-child(2) { animation-delay: 0.2s; }
+    .stat-item:nth-child(3) { animation-delay: 0.3s; }
+    .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes statPop {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 5px 20px rgba(220,20,60,0.5);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      color: #ff4444;
+      font-weight: bold;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .create-event-btn, .music-toggle-btn {
+      padding: 18px 45px;
+      border: 3px solid #dc143c;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #dc143c, #8b0000);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.4s;
+      box-shadow: 0 5px 25px rgba(220,20,60,0.5);
+      position: relative;
+      z-index: 1;
+      margin: 0 10px;
+    }
+
+    .create-event-btn:hover, .music-toggle-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 50px rgba(220,20,60,0.8);
+    }
+
+    .music-toggle-btn {
+      padding: 15px 35px;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      border-color: #9b59b6;
+    }
+
+    /* Create Event Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: rgba(20,0,0,0.98);
+      border: 3px solid #dc143c;
+      border-radius: 25px;
+      padding: 40px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 80px rgba(220,20,60,0.8);
+      animation: modalSlideIn 0.5s;
+      position: relative;
+    }
+
+    @keyframes modalSlideIn {
+      from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #dc143c;
+    }
+
+    .modal-title {
+      font-size: 2.5rem;
+      color: #ff4444;
+      text-shadow: 0 0 20px #dc143c;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #ff4444;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      transform: rotate(90deg) scale(1.2);
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      color: #ff6666;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #dc143c;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: #ff4444;
+      box-shadow: 0 0 20px rgba(220,20,60,0.5);
+      transform: scale(1.02);
+    }
+
+    .form-select option {
+      background: #1a0000;
+      color: #fff;
+    }
+
+    .datetime-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn-submit, .btn-cancel {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #dc143c;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #dc143c, #8b0000);
+      color: #fff;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(220,20,60,0.7);
+    }
+
+    .btn-cancel {
+      background: rgba(220,20,60,0.3);
+      color: #fff;
+    }
+
+    .btn-cancel:hover {
+      background: rgba(220,20,60,0.5);
+    }
+
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs button {
+      padding: 12px 28px;
+      border: 2px solid #dc143c;
+      border-radius: 25px;
+      background: rgba(220,20,60,0.2);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      position: relative;
+    }
+
+    .filter-tabs button:hover,
+    .filter-tabs button.active {
+      background: #dc143c;
+      box-shadow: 0 0 20px #dc143c;
+      transform: translateY(-2px) scale(1.05);
+    }
+
+    .filter-tabs button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #dc143c;
+    }
+
+    .featured-event {
+      background: rgba(20,0,0,0.95);
+      border: 4px solid #ff4444;
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 15px 70px rgba(220,20,60,0.7);
+      margin-bottom: 50px;
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 40px;
+      animation: fadeIn 1s, featureGlow 3s infinite;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    @keyframes featureGlow {
+      0%, 100% { box-shadow: 0 15px 70px rgba(220,20,60,0.7); }
+      50% { box-shadow: 0 20px 90px rgba(220,20,60,0.9), 0 0 50px rgba(220,20,60,0.5); }
+    }
+
+    .featured-event:hover {
+      transform: scale(1.02);
+    }
+
+    .featured-event::before {
+      content: '⭐ FEATURED';
+      position: absolute;
+      top: 20px;
+      right: -35px;
+      background: linear-gradient(135deg, #ff4444, #8b0000);
+      color: white;
+      padding: 8px 50px;
+      transform: rotate(45deg);
+      font-weight: bold;
+      box-shadow: 0 5px 20px rgba(220,20,60,0.7);
+      animation: pulse 2s infinite;
+    }
+
+    .featured-event img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+      border: 3px solid #dc143c;
+      box-shadow: 0 10px 40px rgba(220,20,60,0.5);
+      transition: transform 0.3s;
+    }
+
+    .featured-event:hover img {
+      transform: scale(1.05);
+    }
+
+    .featured-content h2 {
+      color: #ff4444;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px #dc143c;
+    }
+
+    .featured-content h3 {
+      color: #ff6666;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .event-details {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .event-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ddd;
+      font-size: 1.1rem;
+      animation: slideInLeft 0.5s ease-out backwards;
+    }
+
+    .event-detail-item:nth-child(1) { animation-delay: 0.1s; }
+    .event-detail-item:nth-child(2) { animation-delay: 0.2s; }
+    .event-detail-item:nth-child(3) { animation-delay: 0.3s; }
+    .event-detail-item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .event-detail-item span:first-child {
+      color: #ff4444;
+      font-size: 1.3rem;
+    }
+
+    .countdown-timer {
+      background: rgba(220,20,60,0.3);
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+
+    .countdown-label {
+      color: #ff6666;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .countdown-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .countdown-item {
+      text-align: center;
+    }
+
+    .countdown-value {
+      font-size: 2.5rem;
+      color: #ff4444;
+      font-weight: bold;
+      display: block;
+      animation: countdownPulse 1s infinite;
+    }
+
+    @keyframes countdownPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .countdown-unit {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 30px;
+      animation: fadeIn 1.2s;
+    }
+
+    .event-card {
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 50px rgba(220,20,60,0.5);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+      animation: cardSlideIn 0.6s ease-out backwards;
+    }
+
+    .event-card:nth-child(1) { animation-delay: 0.1s; }
+    .event-card:nth-child(2) { animation-delay: 0.2s; }
+    .event-card:nth-child(3) { animation-delay: 0.3s; }
+    .event-card:nth-child(4) { animation-delay: 0.4s; }
+    .event-card:nth-child(5) { animation-delay: 0.5s; }
+    .event-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes cardSlideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .event-card::after {
+      content: 'Click for Details';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(220,20,60,0.95);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .event-card:hover::after {
+      opacity: 1;
+    }
+
+    .event-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 20px 70px rgba(220,20,60,0.8);
+    }
+
+    .event-banner {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-bottom: 3px solid #dc143c;
+      transition: transform 0.4s;
+    }
+
+    .event-card:hover .event-banner {
+      transform: scale(1.1);
+      filter: brightness(0.7);
+    }
+
+    .event-content {
+      padding: 25px;
+    }
+
+    .event-status {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      border: 2px solid;
+    }
+
+    .status-live {
+      background: rgba(46,204,113,0.3);
+      border-color: #2ecc71;
+      color: #2ecc71;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-upcoming {
+      background: rgba(241,196,15,0.3);
+      border-color: #f1c40f;
+      color: #f1c40f;
+    }
+
+    .status-ended {
+      background: rgba(149,165,166,0.3);
+      border-color: #95a5a6;
+      color: #95a5a6;
+    }
+
+    .event-title {
+      color: #ff6666;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px #dc143c;
+      transition: all 0.3s;
+    }
+
+    .event-card:hover .event-title {
+      color: #ff4444;
+      text-shadow: 0 0 20px #dc143c;
+    }
+
+    .event-movie {
+      color: #ddd;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+    }
+
+    .event-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .event-info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ccc;
+    }
+
+    .event-info-item span:first-child {
+      color: #ff4444;
+    }
+
+    .participants {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .participant-avatars {
+      display: flex;
+    }
+
+    .participant-avatars img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid #dc143c;
+      margin-left: -12px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .participant-avatars img:first-child {
+      margin-left: 0;
+    }
+
+    .participant-avatars img:hover {
+      transform: scale(1.2);
+      z-index: 10;
+    }
+
+    .more-participants {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid #dc143c;
+      background: rgba(220,20,60,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: -12px;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .event-actions button {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #dc143c;
+      border-radius: 12px;
+      background: rgba(220,20,60,0.3);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .event-actions button:hover {
+      background: #dc143c;
+      box-shadow: 0 0 20px #dc143c;
+      transform: translateY(-2px);
+    }
+
+    .btn-join {
+      background: rgba(46,204,113,0.5);
+      border-color: #2ecc71;
+    }
+
+    .btn-join:hover {
+      background: #2ecc71;
+      box-shadow: 0 0 20px #2ecc71;
+    }
+
+    /* Floating Ghosts */
+    .ghost {
+      position: fixed;
+      font-size: 3rem;
+      opacity: 0.1;
+      animation: float 15s infinite ease-in-out;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .ghost:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .ghost:nth-child(2) { left: 50%; animation-delay: 5s; }
+    .ghost:nth-child(3) { left: 80%; animation-delay: 10s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.1; }
+      50% { transform: translateY(-20vh) rotate(180deg); opacity: 0.15; }
+      90% { opacity: 0.1; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(20,0,0,0.95);
+      border-top: 3px solid #dc143c;
+      box-shadow: 0 -5px 30px rgba(220,20,60,0.3);
+      margin-top: 60px;
+      color: #888;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { 
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        opacity: 1; 
+        box-shadow: 0 0 15px currentColor;
+      }
+      50% { 
+        opacity: 0.7; 
+        box-shadow: 0 0 5px currentColor;
+      }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #dc143c;
+      border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff4444;
+    }
+
+    @media (max-width: 1024px) {
+      .featured-event {
+        grid-template-columns: 1fr;
+      }
+
+      .events-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      }
+
+      .datetime-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 2.5rem;
+      }
+
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .music-player {
+        width: 250px;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Spooky Decorations -->
+  <div class="spider-web web-top-left"></div>
+  <div class="spider-web web-top-right"></div>
+  <div class="spider-web web-bottom-left"></div>
+  <div class="spider-web web-bottom-right"></div>
+  
+  <div class="spider" onclick="spiderScream()">
+    <div class="spider-body">
+      <div class="spider-legs">
+        <div class="spider-leg"></div>
+        <div class="spider-leg"></div>
+        <div class="spider-leg"></div>
+        <div class="spider-leg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bat">🦇</div>
+  <div class="bat">🦇</div>
+  <div class="bat">🦇</div>
+
+  <div class="ghost">👻</div>
+  <div class="ghost">👻</div>
+  <div class="ghost">👻</div>
+
+  <!-- Crawling Spiders -->
+  <div class="crawling-spider crawling-spider-1" onclick="spiderScream()" title="Click me!">🕷️</div>
+  <div class="crawling-spider crawling-spider-2" onclick="spiderScream()" title="Click me!">🕷️</div>
+
+  <!-- Music Player -->
+  <div class="music-player" id="musicPlayer">
+    <div class="minimize-icon" onclick="toggleMusicSize()">🎵</div>
+    <div class="music-content">
+      <div class="music-header">
+        <div class="music-title">
+          <span>🎵</span>
+          <span>Spooky Soundtrack</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="minimize-music" onclick="minimizeMusic()" title="Minimize">➖</button>
+          <button class="close-music" onclick="closeMusic()" title="Stop & Close">✕</button>
+        </div>
+      </div>
+      
+      <div class="music-track active-track">
+        <div class="track-name">🎃 Horror Playhouse</div>
+        <div class="track-artist">Dark Cinematic</div>
+      </div>
+
+      <div class="music-controls">
+        <button class="music-btn" id="playPauseBtn" onclick="togglePlayPause()" title="Play/Pause">▶️</button>
+        <button class="music-btn" onclick="stopMusic()" title="Stop">⏹️</button>
+        <button class="music-btn" id="resumeBtn" onclick="resumeMusic()" style="display: none;" title="Resume">▶️</button>
+      </div>
+
+      <div class="volume-control">
+        <label style="color: #ff6666; font-size: 0.9rem; display: block; margin-bottom: 8px;">🔊 Volume</label>
+        <input type="range" class="volume-slider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+      </div>
+    </div>
+
+    <audio id="horrorAudio" loop>
+      <source src="horror-playhouse-404813.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- Create Event Modal -->
+  <div class="modal-overlay" id="eventModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">🎬 Create New Event</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <form id="eventForm" onsubmit="submitEvent(event)">
+        <div class="form-group">
+          <label class="form-label">Event Name *</label>
+          <input type="text" class="form-input" id="eventName" placeholder="e.g., Friday Fright Night" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Movie *</label>
+          <select class="form-select" id="eventMovie" required>
+            <option value="">Choose a horror movie...</option>
+            <option value="the-ritual">The Ritual</option>
+            <option value="leprechaun">Leprechaun</option>
+            <option value="scream">Scream</option>
+            <option value="sinister">Sinister</option>
+            <option value="hereditary">Hereditary</option>
+            <option value="midsommar">Midsommar</option>
+            <option value="the-witch">The Witch</option>
+            <option value="halloween">Halloween</option>
+            <option value="the-conjuring">The Conjuring</option>
+          </select>
+        </div>
+
+        <div class="datetime-group">
+          <div class="form-group">
+            <label class="form-label">Date *</label>
+            <input type="date" class="form-input" id="eventDate" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Time *</label>
+            <input type="time" class="form-input" id="eventTime" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Event Type *</label>
+          <select class="form-select" id="eventType" required>
+            <option value="watch-party">👥 Watch Party</option>
+            <option value="premiere">🌟 Premiere Screening</option>
+            <option value="marathon">🎬 Movie Marathon</option>
+            <option value="discussion">💬 Discussion Night</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="eventDescription" placeholder="Tell people what makes your event special..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Maximum Participants</label>
+          <input type="number" class="form-input" id="eventMax" placeholder="Leave empty for unlimited" min="2">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">🎉 Create Event</button>
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+
+  <div class="events-container">
+    <div class="page-header">
+      <h1>🎭 Events & Watch Parties 🎭</h1>
+      <p>Join fellow horror fans for synchronized viewing experiences</p>
+      
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-number">247</span>
+          <span class="stat-label">Total Events</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="liveCount">1</span>
+          <span class="stat-label">Live Now</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5.2K</span>
+          <span class="stat-label">Active Viewers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">89</span>
+          <span class="stat-label">Your Events</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 25px;">
+        <button class="create-event-btn" onclick="openModal()">🎬 Create New Event</button>
+        <button class="music-toggle-btn" onclick="toggleMusic()">🎵 Spooky Music</button>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="active" onclick="filterEvents('all')">All Events</button>
+      <button onclick="filterEvents('live')">🔴 Live Now</button>
+      <button onclick="filterEvents('upcoming')">📅 Upcoming</button>
+      <button onclick="filterEvents('featured')">✨ Featured</button>
+      <button onclick="filterEvents('past')">📜 Past Events</button>
+      <button onclick="filterEvents('mine')">🎟️ My Events</button>
+    </div>
+
+    <div class="featured-event" onclick="openMovieDetails('the-ritual')">
+      <img src="the-ritual.jpg" alt="Featured Event">
+      <div class="featured-content">
+        <h2>Friday Night Fright Fest</h2>
+        <h3>🎬 Screening: "The Ritual"</h3>
+        
+        <div class="event-details">
+          <div class="event-detail-item">
+            <span>🗓️</span>
+            <span>Friday, November 22, 2025</span>
+          </div>
+          <div class="event-detail-item">
+            <span>🕗</span>
+            <span>8:00 PM EST</span>
+          </div>
+          <div class="event-detail-item">
+            <span>👤</span>
+            <span>Hosted by: HorrorFan92</span>
+          </div>
+          <div class="event-detail-item">
+            <span>👥</span>
+            <span>156 people going</span>
+          </div>
+        </div>
+
+        <div class="countdown-timer">
+          <div class="countdown-label">⏰ Event Starts In:</div>
+          <div class="countdown-numbers">
+            <div class="countdown-item">
+              <span class="countdown-value" id="days">5</span>
+              <span class="countdown-unit">Days</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="hours">14</span>
+              <span class="countdown-unit">Hours</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="minutes">32</span>
+              <span class="countdown-unit">Minutes</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="seconds">45</span>
+              <span class="countdown-unit">Seconds</span>
+            </div>
+          </div>
+        </div>
+
+        <p style="color: #ddd; margin-bottom: 25px; line-height: 1.7; font-size: 1.05rem;">
+          Join us for the biggest horror watch party of the month! Experience "The Ritual" with synchronized playback, live chat, and special commentary from the director. Prizes for best reactions!
+        </p>
+
+        <div class="event-actions" style="max-width: 500px;">
+          <button class="btn-join" onclick="joinEvent(event, this)">🎟️ Join Event</button>
+          <button onclick="remindMe(event)">🔔 Remind Me</button>
+          <button onclick="shareEvent(event)">🔗 Share</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="events-grid" id="eventsGrid">
+      <div class="event-card" data-status="live" data-movie="leprechaun" onclick="openMovieDetails('leprechaun')">
+        <img src="leprechaun.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-live">🔴 LIVE NOW</span>
+          <h3 class="event-title">Midnight Madness Marathon</h3>
+          <p class="event-movie">🎬 Leprechaun</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Today • Started 30 min ago</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: DarkSoulCollector</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Watching:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=50" alt="User">
+              <div class="more-participants">+42</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="joinEvent(event, this)">⚡ Join Now</button>
+            <button onclick="event.stopPropagation()">ℹ️ Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card" data-status="upcoming" data-movie="the-curse-of-humpty-dumpty" onclick="openMovieDetails('humpty-dumpty')">
+        <img src="the-curse-of-humpty-dumpty.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-upcoming">📅 UPCOMING</span>
+          <h3 class="event-title">Classic Horror Night</h3>
+          <p class="event-movie">🎬 The Curse of Humpty Dumpty</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Tomorrow • 7:30 PM EST</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: VintageHorror</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Going:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50" alt="User">
+              <div class="more-participants">+28</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="joinEvent(event, this)">✔ Join</button>
+            <button onclick="event.stopPropagation()">ℹ️ Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card" data-status="upcoming" data-movie="scream" onclick="openMovieDetails('scream')">
+        <img src="scream.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-upcoming">📅 UPCOMING</span>
+          <h3 class="event-title">Slasher Saturday</h3>
+          <p class="event-movie">🎬 Scream</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Saturday • 9:00 PM EST</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: ScreamQueen</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Going:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1494790778202-cad84cf45f1d?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50" alt="User">
+              <div class="more-participants">+67</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="joinEvent(event, this)">✔ Join</button>
+            <button onclick="event.stopPropagation()">ℹ️ Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card" data-status="ended" data-movie="sinister" onclick="openMovieDetails('sinister')">
+        <img src="sinister.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-ended">⌛ ENDED</span>
+          <h3 class="event-title">Sunday Scares</h3>
+          <p class="event-movie">🎬 Sinister</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Yesterday • 6:00 PM EST</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: NightmareEnthusiast</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Attended:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50" alt="User">
+              <div class="more-participants">+89</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button onclick="event.stopPropagation()">📺 Watch Recording</button>
+            <button onclick="event.stopPropagation()">💬 Discussion</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card" data-status="upcoming" data-movie="hereditary" onclick="openMovieDetails('hereditary')">
+        <img src="hereditary.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-upcoming">📅 UPCOMING</span>
+          <h3 class="event-title">Psychological Horror Night</h3>
+          <p class="event-movie">🎬 Hereditary</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Next Week • Thursday 8:00 PM</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: AriAsterFan</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Going:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50" alt="User">
+              <div class="more-participants">+123</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="joinEvent(event, this)">✔ Join</button>
+            <button onclick="event.stopPropagation()">ℹ️ Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card" data-status="upcoming" data-movie="midsommar" onclick="openMovieDetails('midsommar')">
+        <img src="midsommar.jpg" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-upcoming">📅 UPCOMING</span>
+          <h3 class="event-title">Folk Horror Festival</h3>
+          <p class="event-movie">🎬 Midsommar</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>Next Week • Sunday 7:00 PM</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: SunnyHorrors</span>
+            </div>
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Going:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50" alt="User">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50" alt="User">
+              <div class="more-participants">+94</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="joinEvent(event, this)">✔ Join</button>
+            <button onclick="event.stopPropagation()">ℹ️ Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 HorrorVerse | All Rights Reserved | Dive into the darkness</p>
+  </footer>
+
+  <script>
+    // Movie mapping for redirecting to details page
+    const movieData = {
+      'the-ritual': {
+        id: 1,
+        title: "The Ritual",
+        genre: "folk-horror",
+        year: 2017,
+        rating: 4.8,
+        image: "the-ritual.jpg",
+        description: "A group of friends hiking in Sweden stumble upon an ancient evil lurking in the Nordic forests.",
+        cast: ["Rafe Spall", "Arsher Ali", "Robert James-Collier"],
+        director: "David Bruckner",
+        runtime: "94 min"
+      },
+      'leprechaun': {
+        id: 2,
+        title: "Leprechaun",
+        genre: "horror-comedy",
+        year: 1993,
+        rating: 3.5,
+        image: "leprechaun.jpg",
+        description: "An evil, sadistic leprechaun goes on a killing rampage in search of his beloved pot of gold.",
+        cast: ["Warwick Davis", "Jennifer Aniston"],
+        director: "Mark Jones",
+        runtime: "92 min"
+      },
+      'humpty-dumpty': {
+        id: 3,
+        title: "The Curse of Humpty Dumpty",
+        genre: "supernatural",
+        year: 2021,
+        rating: 3.8,
+        image: "the-curse-of-humpty-dumpty.jpg",
+        description: "A cursed puppet wreaks havoc on those who dare disturb its dark secrets.",
+        cast: ["Nicola Wright", "Sian Altman"],
+        director: "Scott Chambers",
+        runtime: "92 min"
+      },
+      'scream': {
+        id: 4,
+        title: "Scream",
+        genre: "slasher",
+        year: 1996,
+        rating: 4.7,
+        image: "scream.jpg",
+        description: "A year after her mother's death, a teenage girl is terrorized by a new killer who targets her and her friends.",
+        cast: ["Neve Campbell", "Courteney Cox", "David Arquette"],
+        director: "Wes Craven",
+        runtime: "111 min"
+      },
+      'sinister': {
+        id: 5,
+        title: "Sinister",
+        genre: "supernatural",
+        year: 2012,
+        rating: 4.5,
+        image: "sinister.jpg",
+        description: "A true-crime writer finds a box of home movies that puts his family in supernatural danger.",
+        cast: ["Ethan Hawke", "Juliet Rylance"],
+        director: "Scott Derrickson",
+        runtime: "110 min"
+      },
+      'hereditary': {
+        id: 6,
+        title: "Hereditary",
+        genre: "psychological-horror",
+        year: 2018,
+        rating: 4.9,
+        image: "hereditary.jpg",
+        description: "A grieving family is haunted by tragic and disturbing occurrences after the death of their secretive grandmother.",
+        cast: ["Toni Collette", "Alex Wolff", "Milly Shapiro"],
+        director: "Ari Aster",
+        runtime: "127 min"
+      },
+      'midsommar': {
+        id: 7,
+        title: "Midsommar",
+        genre: "folk-horror",
+        year: 2019,
+        rating: 4.6,
+        image: "midsommar.jpg",
+        description: "A couple travels to Sweden to visit a rural hometown's fabled mid-summer festival, which takes a sinister turn.",
+        cast: ["Florence Pugh", "Jack Reynor", "William Jackson Harper"],
+        director: "Ari Aster",
+        runtime: "148 min"
+      },
+      'the-witch': {
+        id: 8,
+        title: "The Witch",
+        genre: "folk-horror",
+        year: 2015,
+        rating: 4.7,
+        image: "witch.jpg",
+        description: "A family in 1630s New England is torn apart by the forces of witchcraft, black magic and possession.",
+        cast: ["Anya Taylor-Joy", "Ralph Ineson"],
+        director: "Robert Eggers",
+        runtime: "92 min"
+      },
+      'halloween': {
+        id: 9,
+        title: "Halloween",
+        genre: "slasher",
+        year: 1978,
+        rating: 4.9,
+        image: "halloween.jpg",
+        description: "Fifteen years after murdering his sister, Michael Myers escapes and returns to kill again.",
+        cast: ["Jamie Lee Curtis", "Donald Pleasence"],
+        director: "John Carpenter",
+        runtime: "91 min"
+      },
+      'the-conjuring': {
+        id: 10,
+        title: "The Conjuring",
+        genre: "supernatural",
+        year: 2013,
+        rating: 4.8,
+        image: "the conjuring.jpg",
+        description: "Paranormal investigators work to help a family terrorized by a dark presence in their farmhouse.",
+        cast: ["Vera Farmiga", "Patrick Wilson", "Lili Taylor"],
+        director: "James Wan",
+        runtime: "112 min"
+      }
+    };
+
+    // Similar movies mapping with correct images
+    const similarMoviesMap = {
+      'the-ritual': [
+        { id: 7, title: "Midsommar", year: 2019, image: "midsommar.jpg", key: "midsommar" },
+        { id: 8, title: "The Witch", year: 2015, image: "witch.jpg", key: "the-witch" },
+        { id: 10, title: "The Conjuring", year: 2013, image: "the conjuring.jpg", key: "the-conjuring" },
+        { id: 6, title: "Hereditary", year: 2018, image: "hereditary.jpg", key: "hereditary" }
+      ],
+      'leprechaun': [
+        { id: 4, title: "Scream", year: 1996, image: "scream.jpg", key: "scream" },
+        { id: 9, title: "Halloween", year: 1978, image: "halloween.jpg", key: "halloween" },
+        { id: 5, title: "Sinister", year: 2012, image: "sinister.jpg", key: "sinister" },
+        { id: 3, title: "The Curse of Humpty Dumpty", year: 2021, image: "the-curse-of-humpty-dumpty.jpg", key: "humpty-dumpty" }
+      ],
+      'humpty-dumpty': [
+        { id: 10, title: "The Conjuring", year: 2013, image: "the conjuring.jpg", key: "the-conjuring" },
+        { id: 5, title: "Sinister", year: 2012, image: "sinister.jpg", key: "sinister" },
+        { id: 8, title: "The Witch", year: 2015, image: "witch.jpg", key: "the-witch" },
+        { id: 2, title: "Leprechaun", year: 1993, image: "leprechaun.jpg", key: "leprechaun" }
+      ],
+      'scream': [
+        { id: 9, title: "Halloween", year: 1978, image: "halloween.jpg", key: "halloween" },
+        { id: 2, title: "Leprechaun", year: 1993, image: "leprechaun.jpg", key: "leprechaun" },
+        { id: 5, title: "Sinister", year: 2012, image: "sinister.jpg", key: "sinister" },
+        { id: 1, title: "The Ritual", year: 2017, image: "the-ritual.jpg", key: "the-ritual" }
+      ],
+      'sinister': [
+        { id: 10, title: "The Conjuring", year: 2013, image: "the conjuring.jpg", key: "the-conjuring" },
+        { id: 6, title: "Hereditary", year: 2018, image: "hereditary.jpg", key: "hereditary" },
+        { id: 8, title: "The Witch", year: 2015, image: "witch.jpg", key: "the-witch" },
+        { id: 9, title: "Halloween", year: 1978, image: "halloween.jpg", key: "halloween" }
+      ],
+      'hereditary': [
+        { id: 7, title: "Midsommar", year: 2019, image: "midsommar.jpg", key: "midsommar" },
+        { id: 8, title: "The Witch", year: 2015, image: "witch.jpg", key: "the-witch" },
+        { id: 5, title: "Sinister", year: 2012, image: "sinister.jpg", key: "sinister" },
+        { id: 10, title: "The Conjuring", year: 2013, image: "the conjuring.jpg", key: "the-conjuring" }
+      ],
+      'midsommar': [
+        { id: 6, title: "Hereditary", year: 2018, image: "hereditary.jpg", key: "hereditary" },
+        { id: 1, title: "The Ritual", year: 2017, image: "the-ritual.jpg", key: "the-ritual" },
+        { id: 8, title: "The Witch", year: 2015, image: "witch.jpg", key: "the-witch" },
+        { id: 10, title: "The Conjuring", year: 2013, image: "the conjuring.jpg", key: "the-conjuring" }
+      ]
+    };
+
+    // Store similar movies data for moviedetails.html
+    sessionStorage.setItem('similarMoviesMap', JSON.stringify(similarMoviesMap));
+
+    // Music player variables
+    let isPlaying = false;
+    const audio = document.getElementById('horrorAudio');
+
+    // Cursor trail effect
+    document.addEventListener('mousemove', (e) => {
+      if (Math.random() > 0.9) {
+        const trail = document.createElement('div');
+        trail.className = 'cursor-trail';
+        trail.style.left = e.pageX + 'px';
+        trail.style.top = e.pageY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(() => trail.remove(), 500);
+      }
+    });
+
+    // Countdown timer for featured event - Fixed to count down properly
+    let countdownInterval;
+    
+    function updateCountdown() {
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      
+      let days = parseInt(daysEl.textContent);
+      let hours = parseInt(hoursEl.textContent);
+      let minutes = parseInt(minutesEl.textContent);
+      let seconds = parseInt(secondsEl.textContent);
+      
+      seconds--;
+      
+      if (seconds < 0) {
+        seconds = 59;
+        minutes--;
+      }
+      
+      if (minutes < 0) {
+        minutes = 59;
+        hours--;
+      }
+      
+      if (hours < 0) {
+        hours = 23;
+        days--;
+      }
+      
+      if (days < 0) {
+        days = 0;
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+        clearInterval(countdownInterval);
+      }
+      
+      daysEl.textContent = String(days).padStart(2, '0');
+      hoursEl.textContent = String(hours).padStart(2, '0');
+      minutesEl.textContent = String(minutes).padStart(2, '0');
+      secondsEl.textContent = String(seconds).padStart(2, '0');
+    }
+    
+    countdownInterval = setInterval(updateCountdown, 1000);
+
+    // Music player functions
+    function toggleMusic() {
+      const player = document.getElementById('musicPlayer');
+      if (player.style.display === 'none') {
+        player.style.display = 'block';
+        player.classList.remove('minimized');
+        showNotification('🎵 Music player opened! Click play to start', '#9b59b6');
+      } else {
+        player.style.display = 'block';
+        player.classList.remove('minimized');
+      }
+    }
+
+    function minimizeMusic() {
+      const player = document.getElementById('musicPlayer');
+      player.classList.add('minimized');
+      showNotification('➖ Player minimized - Click to expand', '#3498db');
+    }
+
+    function toggleMusicSize() {
+      const player = document.getElementById('musicPlayer');
+      player.classList.remove('minimized');
+    }
+
+    function closeMusic() {
+      const player = document.getElementById('musicPlayer');
+      
+      // Stop the music
+      audio.pause();
+      audio.currentTime = 0;
+      isPlaying = false;
+      document.getElementById('playPauseBtn').textContent = '▶️';
+      document.getElementById('playPauseBtn').style.display = 'block';
+      document.getElementById('resumeBtn').style.display = 'none';
+      
+      // Hide the player
+      player.style.display = 'none';
+      player.classList.remove('minimized');
+      
+      showNotification('⏹️ Music stopped and player closed', '#95a5a6');
+    }
+
+    function togglePlayPause() {
+      const btn = document.getElementById('playPauseBtn');
+      
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+        btn.textContent = '▶️';
+        showNotification('⏸️ Music paused', '#e67e22');
+      } else {
+        audio.play().then(() => {
+          isPlaying = true;
+          btn.textContent = '⏸️';
+          showNotification('🎵 Playing: Horror Playhouse', '#2ecc71');
+        }).catch(err => {
+          showNotification('❌ Error playing audio. Make sure the file exists!', '#e74c3c');
+          console.error('Audio error:', err);
+        });
+      }
+    }
+
+    function stopMusic() {
+      audio.pause();
+      audio.currentTime = 0;
+      isPlaying = false;
+      
+      const playBtn = document.getElementById('playPauseBtn');
+      playBtn.textContent = '▶️';
+      
+      showNotification('⏹️ Music stopped - Press play to restart', '#95a5a6');
+    }
+
+    function resumeMusic() {
+      togglePlayPause();
+      document.getElementById('resumeBtn').style.display = 'none';
+      document.getElementById('playPauseBtn').style.display = 'block';
+    }
+
+    function changeVolume(value) {
+      audio.volume = value / 100;
+      showNotification(`🔊 Volume: ${value}%`, '#3498db');
+    }
+
+    // Spider scream effect
+    function spiderScream() {
+      showNotification('🕷️ AAAHHHH! You disturbed the spider!', '#e74c3c');
+      const spider = document.querySelector('.spider');
+      spider.style.animation = 'none';
+      setTimeout(() => {
+        spider.style.animation = 'spiderDrop 5s ease-in-out infinite';
+      }, 100);
+    }
+
+    // Modal functions
+    function openModal() {
+      document.getElementById('eventModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('eventModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+      document.getElementById('eventForm').reset();
+    }
+
+    function submitEvent(e) {
+      e.preventDefault();
+      
+      const eventName = document.getElementById('eventName').value;
+      const eventMovie = document.getElementById('eventMovie').value;
+      const eventDate = document.getElementById('eventDate').value;
+      const eventTime = document.getElementById('eventTime').value;
+      const eventType = document.getElementById('eventType').value;
+      const eventDescription = document.getElementById('eventDescription').value;
+      const eventMax = document.getElementById('eventMax').value;
+
+      // Create new event card
+      const movieName = movieData[eventMovie]?.title || 'Unknown Movie';
+      const movieImage = movieData[eventMovie]?.image || 'mov1.jpg';
+      
+      const newEventCard = document.createElement('div');
+      newEventCard.className = 'event-card';
+      newEventCard.setAttribute('data-status', 'upcoming');
+      newEventCard.setAttribute('data-movie', eventMovie);
+      newEventCard.onclick = () => openMovieDetails(eventMovie);
+      
+      const dateObj = new Date(eventDate + 'T' + eventTime);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      
+      newEventCard.innerHTML = `
+        <img src="${movieImage}" alt="Event" class="event-banner">
+        <div class="event-content">
+          <span class="event-status status-upcoming">📅 UPCOMING</span>
+          <h3 class="event-title">${eventName}</h3>
+          <p class="event-movie">🎬 ${movieName}</p>
+          
+          <div class="event-info">
+            <div class="event-info-item">
+              <span>🗓️</span>
+              <span>${formattedDate} • ${formattedTime}</span>
+            </div>
+            <div class="event-info-item">
+              <span>👤</span>
+              <span>Host: You</span>
+            </div>
+            ${eventMax ? `<div class="event-info-item">
+              <span>👥</span>
+              <span>Max: ${eventMax} participants</span>
+            </div>` : ''}
+          </div>
+
+          <div class="participants">
+            <span style="color: #ccc;">Going:</span>
+            <div class="participant-avatars">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50" alt="User">
+              <div class="more-participants">+1</div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn-join" onclick="event.stopPropagation(); manageEvent(this)">⚙️ Manage</button>
+            <button onclick="event.stopPropagation()">🔗 Share</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('eventsGrid').insertBefore(newEventCard, document.getElementById('eventsGrid').firstChild);
+      
+      closeModal();
+      showNotification('🎉 Event created successfully!', '#2ecc71');
+      
+      // Animate new card
+      newEventCard.style.animation = 'cardSlideIn 0.6s ease-out';
+    }
+
+    function manageEvent(btn) {
+      showNotification('⚙️ Event management panel would open here', '#3498db');
+    }
+
+    function openMovieDetails(movieKey) {
+      const movie = movieData[movieKey];
+      if (movie) {
+        sessionStorage.setItem('selectedMovie', JSON.stringify(movie));
+        window.location.href = 'moviedetails.html';
+      }
+    }
+
+    function joinEvent(e, btn) {
+      e.stopPropagation();
+      if (btn.textContent.includes('Join') || btn.textContent.includes('⚡')) {
+        btn.textContent = '✓ Joined';
+        btn.style.background = '#2ecc71';
+        btn.style.borderColor = '#2ecc71';
+        showNotification('✓ Successfully joined the event!', '#2ecc71');
+      }
+    }
+
+    function remindMe(e) {
+      e.stopPropagation();
+      showNotification('🔔 Reminder set! We\'ll notify you 1 hour before', '#3498db');
+    }
+
+    function shareEvent(e) {
+      e.stopPropagation();
+      showNotification('🔗 Event link copied to clipboard!', '#9b59b6');
+    }
+
+    function filterEvents(filter) {
+      const buttons = document.querySelectorAll('.filter-tabs button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      const cards = document.querySelectorAll('.event-card');
+      let visibleCount = 0;
+      
+      if (filter === 'all') {
+        cards.forEach(card => {
+          card.style.display = 'block';
+          visibleCount++;
+        });
+      } else if (filter === 'live') {
+        cards.forEach(card => {
+          if (card.dataset.status === 'live') {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      } else if (filter === 'upcoming') {
+        cards.forEach(card => {
+          if (card.dataset.status === 'upcoming') {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      } else if (filter === 'past') {
+        cards.forEach(card => {
+          if (card.dataset.status === 'ended') {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      } else if (filter === 'featured') {
+        cards.forEach(card => card.style.display = 'none');
+        showNotification('Featured event shown at top!', '#f1c40f');
+        return;
+      } else if (filter === 'mine') {
+        cards.forEach(card => card.style.display = 'none');
+        showNotification('Showing only your created events', '#9b59b6');
+        return;
+      }
+      
+      showNotification(`Showing ${visibleCount} ${filter} events`, '#3498db');
+    }
+
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background: ${color};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        z-index: 10000;
+        font-weight: bold;
+        animation: slideIn 0.3s;
+        border: 2px solid rgba(255,255,255,0.3);
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Update live count on page load
+    function updateLiveCount() {
+      const liveCards = document.querySelectorAll('.event-card[data-status="live"]');
+      document.getElementById('liveCount').textContent = liveCards.length;
+    }
+
+    // Spider movement on scroll
+    window.addEventListener('scroll', () => {
+      const spider = document.querySelector('.spider');
+      const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      spider.style.transform = `translateY(${scrollPercent * 200}px)`;
+    });
+
+    // Random flickering effect for logo
+    setInterval(() => {
+      const logo = document.querySelector('.logo');
+      if (Math.random() > 0.95) {
+        logo.style.opacity = '0.5';
+        setTimeout(() => logo.style.opacity = '1', 100);
+      }
+    }, 200);
+
+    // Close modal when clicking outside
+    document.getElementById('eventModal').addEventListener('click', (e) => {
+      if (e.target.id === 'eventModal') {
+        closeModal();
+      }
+    });
+
+    // Initialize
+    updateLiveCount();
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        const musicPlayer = document.getElementById('musicPlayer');
+        if (musicPlayer.style.display !== 'none') {
+          toggleMusic();
+        }
+      }
+      if (e.key === 'm' || e.key === 'M') {
+        if (!document.getElementById('eventModal').classList.contains('active')) {
+          toggleMusic();
+        }
+      }
+      if (e.key === ' ') {
+        const musicPlayer = document.getElementById('musicPlayer');
+        if (musicPlayer.style.display !== 'none') {
+          e.preventDefault();
+          togglePlayPause();
+        }
+      }
+    });
+
+    // Random creepy sounds effect indicator
+    setInterval(() => {
+      if (Math.random() > 0.98) {
+        const sounds = ['👻', '🕷️', '🦇', '💀', '🧛'];
+        const sound = sounds[Math.floor(Math.random() * sounds.length)];
+        showNotification(`${sound} *creepy sound*`, '#8b0000');
+      }
+    }, 10000);
+
+    console.log('%c🎃 Welcome to HorrorVerse Events! 🎃', 'font-size: 20px; color: #dc143c; font-weight: bold;');
+    console.log('%cKeyboard Shortcuts:', 'font-size: 14px; color: #ff6666;');
+    console.log('%c• ESC - Close modals', 'color: #ccc;');
+    console.log('%c• M - Toggle music player', 'color: #ccc;');
+    console.log('%c• SPACE - Play/Pause music', 'color: #ccc;');
+  </script>
+</body>
+</html>

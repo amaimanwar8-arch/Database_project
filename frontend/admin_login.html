@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - HorrorVerse</title>
+  <style>
+    /* Reset & base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(3px);
+      z-index: 0;
+    }
+
+    /* Container */
+    .login-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(20,0,0,0.85);
+      padding: 50px 40px;
+      border-radius: 20px;
+      border: 2px solid crimson;
+      box-shadow: 0 0 30px crimson;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeInUp 1s ease;
+    }
+
+    h1 {
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    label {
+      text-align: left;
+      font-weight: bold;
+      color: #ddd;
+      margin-bottom: 5px;
+    }
+
+    input[type="email"], input[type="password"] {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #ff4444;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input[type="email"]:focus, input[type="password"]:focus {
+      border-color: crimson;
+      box-shadow: 0 0 8px crimson;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .field-row input {
+      flex: 1;
+    }
+    .show-pass {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      color: #ddd;
+      transition: color 0.3s;
+    }
+    .show-pass:hover {
+      color: #fff;
+    }
+
+    button[type="submit"] {
+      background: rgba(255,68,68,0.8);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+      transform: translateY(-2px);
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    a {
+      color: #ff4444;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    a:hover {
+      text-decoration: underline;
+      color: #fff;
+    }
+
+    #error {
+      color: #ff4444;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Admin Login</h1>
+    <form id="loginForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+
+      <label for="password">Password:</label>
+      <div class="field-row">
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button type="button" class="show-pass" id="togglePassword" aria-label="Show password">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.238-5-5s2.239-5 5-5 5 2.238 5 5-2.239 5-5 5zm0-8c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z"/>
+          </svg>
+        </button>
+      </div>
+
+      <label>
+        <input type="checkbox" id="remember"> Remember Me
+      </label>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="error"></p>
+
+    <p>
+      <a href="admin_signup.html">Sign Up</a> | 
+      <a href="forgot_password_admin.html">Forgot Password?</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const error = document.getElementById('error');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+
+    togglePassword.addEventListener('click', () => {
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = passwordInput.value.trim();
+      const remember = document.getElementById('remember').checked;
+
+      if (!email || !password) {
+        error.textContent = 'Please enter email and password.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        if (data.user.role !== 'admin') {
+          throw new Error('This is admin login only');
+        }
+
+        // Save token and user
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        // Optional: Remember me (longer expiry if checked)
+        if (remember) {
+          // Could use cookies for longer persistence
+          console.log('Remember me enabled');
+        }
+
+        window.location.href = 'admin_home.html';
+
+      } catch (err) {
+        error.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cinzel', serif; }
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); z-index: -1;
+    }
+    .navbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 40px; background: rgba(20,0,0,0.9); border-bottom: 3px solid crimson;
+      box-shadow: 0 0 20px crimson; position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 2rem; color: #ff4444; text-shadow: 0 0 12px crimson; }
+    .navbar a { color: #ff6666; text-decoration: none; margin-left: 30px; font-weight: bold; }
+    .navbar a:hover { color: #fff; }
+
+    .container { max-width: 1300px; margin: 40px auto; padding: 20px; }
+
+    h1 {
+      text-align: center; font-size: 3rem; color: #ff4444; text-shadow: 0 0 20px crimson; margin-bottom: 40px;
+    }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 50px;
+    }
+    .stat-card {
+      background: rgba(20,0,0,0.8); border: 2px solid crimson; border-radius: 15px;
+      padding: 30px; text-align: center; box-shadow: 0 0 25px rgba(220,20,60,0.6);
+    }
+    .stat-card h3 { font-size: 1.4rem; color: #ff6666; margin-bottom: 10px; }
+    .stat-card p { font-size: 2.5rem; color: #fff; }
+
+    table {
+      width: 100%; border-collapse: collapse; background: rgba(20,0,0,0.7); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 0 20px rgba(220,20,60,0.5);
+    }
+    th, td {
+      padding: 15px; text-align: left; border-bottom: 1px solid rgba(220,20,60,0.3);
+    }
+    th { background: crimson; color: white; }
+    tr:hover { background: rgba(220,20,60,0.2); }
+    .btn-delete {
+      background: #e74c3c; color: white; border: none; padding: 8px 15px;
+      border-radius: 6px; cursor: pointer; font-weight: bold;
+    }
+    .btn-delete:hover { background: #c0392b; }
+
+    .logout-btn {
+      background: crimson; color: white; padding: 10px 20px; border: none;
+      border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+    .logout-btn:hover { background: #ff4444; }
+
+    .loading { text-align: center; padding: 60px; font-size: 1.6rem; }
+    .error { color: #e74c3c; text-align: center; padding: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar container for dynamic load -->
+<div id="sidebar-container"></div>
+
+<!-- Menu button to open sidebar -->
+<button class="menu-icon" onclick="openNav()">☰</button>
+
+<div id="main">
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+
+    <div id="loading" class="loading">Loading dashboard...</div>
+    <div id="error" class="error" style="display:none;"></div>
+
+    <div id="content" style="display:none;">
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <p id="totalUsers">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Movies</h3>
+          <p id="totalMovies">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Posts</h3>
+          <p id="totalPosts">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Events</h3>
+          <p id="totalEvents">0</p>
+        </div>
+      </div>
+
+      <h2>Manage Users</h2>
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:60px;">Audit Logs</h2>
+      <table id="logsTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Admin</th>
+            <th>Action</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="logsBody">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- LOGOUT MODAL — NOW WORKING -->
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to logout?</p>
+    <div class="modal-buttons">
+      <button id="yesLogout">Yes</button>
+      <button id="noLogout">No</button>
+    </div>
+  </div>
+</div>
+<!-- Admin flag for sidebar -->
+<script>const isAdmin = true;</script>
+
+<script src="sidebar.js"></script>
+<script>
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (!token || user.role !== 'admin') {
+    alert('Access denied. Admins only.');
+    window.location.href = 'admin_login.html';
+  }
+
+  async function loadDashboard() {
+    try {
+      const [usersRes, moviesRes, postsRes, eventsRes, logsRes] = await Promise.all([
+        fetch('/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/user/movies', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/user/posts', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/user/events', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/admin/audit-logs', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+
+      if (!usersRes.ok) throw new Error('Failed to load data');
+
+      const users = await usersRes.json();
+      const movies = await moviesRes.json();
+      const posts = await postsRes.json();
+      const events = await eventsRes.json();
+      const logs = await logsRes.json();
+
+      // Update stats
+      document.getElementById('totalUsers').textContent = users.length;
+      document.getElementById('totalMovies').textContent = movies.length;
+      document.getElementById('totalPosts').textContent = posts.length;
+      document.getElementById('totalEvents').textContent = events.length;
+
+
+const usersBody = document.getElementById('usersBody');
+usersBody.innerHTML = users
+  .filter(u => u.role !== 'admin')
+  .map(u => `
+    <tr>
+      <td>${u.user_id}</td>
+      <td>${u.name || '—'}</td>
+      <td>${u.email}</td>
+      <td>${u.role || 'user'}</td>
+      <td>
+        <button class="btn-delete" onclick="deleteUser(${u.user_id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').textContent = 'Error: ' + err.message;
+      document.getElementById('error').style.display = 'block';
+    }
+  }
+
+  async function deleteUser(id) {
+    if (!confirm('Delete user?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        loadDashboard();
+      } else {
+        alert('Delete failed');
+      }
+    } catch (err) {
+      alert('Error deleting');
+    }
+  }
+
+
+
+  loadDashboard();
+</script>
+</body>
+</html>

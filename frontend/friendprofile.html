@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friend Profile - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+<script src="sidebar.js" defer></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                  url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1920') center/cover fixed;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+
+
+    .profile-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .profile-header {
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 10px 60px rgba(220,20,60,0.6);
+      margin-bottom: 40px;
+      text-align: center;
+      animation: slideDown 0.8s;
+    }
+
+    .profile-avatar {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 5px solid #dc143c;
+      margin: 0 auto 25px;
+      object-fit: cover;
+      box-shadow: 0 10px 40px rgba(220,20,60,0.7);
+    }
+
+    .online-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(46,204,113,0.3);
+      border: 2px solid #2ecc71;
+      padding: 8px 20px;
+      border-radius: 20px;
+      color: #2ecc71;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .offline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(149,165,166,0.3);
+      border: 2px solid #95a5a6;
+      padding: 8px 20px;
+      border-radius: 20px;
+      color: #95a5a6;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .online-dot {
+      width: 12px;
+      height: 12px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .offline-dot {
+      width: 12px;
+      height: 12px;
+      background: #95a5a6;
+      border-radius: 50%;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px #2ecc71; }
+      50% { box-shadow: 0 0 20px #2ecc71; }
+    }
+
+    .profile-name {
+      font-size: 2.5rem;
+      color: #ff4444;
+      text-shadow: 0 0 20px #dc143c;
+      margin-bottom: 15px;
+    }
+
+    .profile-activity {
+      color: #888;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 20px;
+      background: rgba(30,0,0,0.9);
+      border: 2px solid rgba(220,20,60,0.5);
+      border-radius: 15px;
+      transition: all 0.3s;
+    }
+
+    .stat-box:hover {
+      border-color: #dc143c;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(220,20,60,0.5);
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      color: #ff4444;
+      font-weight: bold;
+      text-shadow: 0 0 15px #dc143c;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .profile-actions button {
+      padding: 15px 35px;
+      border: 2px solid #dc143c;
+      border-radius: 15px;
+      background: rgba(220,20,60,0.4);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .profile-actions button:hover {
+      background: #dc143c;
+      box-shadow: 0 0 20px #dc143c;
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #dc143c, #8b0000) !important;
+    }
+
+    .btn-success {
+      background: rgba(46,204,113,0.5) !important;
+      border-color: #2ecc71 !important;
+    }
+
+    .btn-success:hover {
+      background: #2ecc71 !important;
+      box-shadow: 0 0 20px #2ecc71 !important;
+    }
+
+    .profile-section {
+      background: rgba(20,0,0,0.95);
+      border: 3px solid #dc143c;
+      border-radius: 25px;
+      padding: 35px;
+      box-shadow: 0 10px 60px rgba(220,20,60,0.6);
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      color: #ff4444;
+      text-shadow: 0 0 20px #dc143c;
+      margin-bottom: 25px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .info-item {
+      padding: 15px;
+      background: rgba(30,0,0,0.9);
+      border: 2px solid rgba(220,20,60,0.3);
+      border-radius: 12px;
+    }
+
+    .info-label {
+      color: #ff6666;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .info-value {
+      color: #ccc;
+      font-size: 1rem;
+    }
+
+    .favorite-movies {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+
+    .movie-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #dc143c;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .movie-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(220,20,60,0.6);
+    }
+
+    .movie-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .movie-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.95));
+      padding: 30px 10px 10px;
+      color: #fff;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(20,0,0,0.95);
+      border-top: 3px solid #dc143c;
+      box-shadow: 0 -5px 30px rgba(220,20,60,0.3);
+      color: #888;
+    }
+
+    @keyframes slideDown {
+      from { 
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .profile-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-name {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+
+  <div class="profile-container">
+    <div class="profile-header" id="profileHeader">
+      <!-- Profile content will be loaded here -->
+    </div>
+
+    <div class="profile-section">
+      <h2 class="section-title">Profile Information</h2>
+      <div class="info-grid" id="profileInfo">
+        <!-- Profile info will be loaded here -->
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h2 class="section-title">Favorite Movies</h2>
+      <div class="favorite-movies" id="favoriteMovies">
+        <!-- Favorite movies will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 HorrorVerse | All Rights Reserved | Dive into the darkness</p>
+  </footer>
+
+  <script>
+    const usersDatabase = {
+      1: {
+        id: 1,
+        name: "HorrorFan92",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=180&fit=crop",
+        status: "online",
+        activity: 'Watching "The Ritual"',
+        movies: 143,
+        reviews: 89,
+        friends: 267,
+        email: "horrorfan92@horrorverse.com",
+        memberSince: "January 2023",
+        location: "Los Angeles, CA",
+        bio: "Horror enthusiast and film critic. Love exploring dark and terrifying cinema!",
+        favoriteGenre: "Folk Horror",
+        favoriteMovies: [
+          { title: "The Ritual", image: "the-ritual.jpg" },
+          { title: "Hereditary", image: "hereditary.jpg" },
+          { title: "The Witch", image: "witch.jpg" }
+        ]
+      },
+      2: {
+        id: 2,
+        name: "CinematicSpooks",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=180&fit=crop",
+        status: "online",
+        activity: "In lobby",
+        movies: 98,
+        reviews: 45,
+        friends: 178,
+        email: "cinematicspooks@horrorverse.com",
+        memberSince: "March 2023",
+        location: "New York, NY",
+        bio: "Film student specializing in horror cinematography and sound design.",
+        favoriteGenre: "Psychological Horror",
+        favoriteMovies: [
+          { title: "Leprechaun", image: "leprechaun.jpg" },
+          { title: "Midsommar", image: "midsommar.jpg" },
+          { title: "Sinister", image: "sinister.jpg" }
+        ]
+      },
+      3: {
+        id: 3,
+        name: "GothicDreamer",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=180&fit=crop",
+        status: "offline",
+        activity: "Last seen 2 hours ago",
+        movies: 76,
+        reviews: 32,
+        friends: 134,
+        email: "gothicdreamer@horrorverse.com",
+        memberSince: "June 2023",
+        location: "Portland, OR",
+        bio: "Gothic horror enthusiast. Love the classic and atmospheric horror films.",
+        favoriteGenre: "Gothic Horror",
+        favoriteMovies: [
+          { title: "The Conjuring", image: "the conjuring.jpg" },
+          { title: "The Curse of Humpty Dumpty", image: "the-curse-of-humpty-dumpty.jpg" },
+          { title: "The Forest", image: "the-forest.jpg" }
+        ]
+      },
+      4: {
+        id: 4,
+        name: "ScreamQueen",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=180&fit=crop",
+        status: "online",
+        activity: "Browsing movies",
+        movies: 112,
+        reviews: 58,
+        friends: 198,
+        email: "screamqueen@horrorverse.com",
+        memberSince: "February 2023",
+        location: "Austin, TX",
+        bio: "Slasher film aficionado. Nothing beats a good chase scene!",
+        favoriteGenre: "Slasher",
+        favoriteMovies: [
+          { title: "Scream", image: "scream.jpg" },
+          { title: "Halloween", image: "halloween.jpg" },
+          { title: "Sinister", image: "sinister.jpg" }
+        ]
+      },
+      5: {
+        id: 5,
+        name: "VintageHorror",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=180&fit=crop",
+        status: "online",
+        activity: "Writing review",
+        movies: 89,
+        reviews: 41,
+        friends: 145,
+        email: "vintagehorror@horrorverse.com",
+        memberSince: "April 2023",
+        location: "Chicago, IL",
+        bio: "Classic horror collector. Old school horror will always reign supreme!",
+        favoriteGenre: "Classic Horror",
+        favoriteMovies: [
+          { title: "The Forest", image: "the-forest.jpg" },
+          { title: "Insidious", image: "mov1.jpg" },
+          { title: "The Ritual", image: "the-ritual.jpg" }
+        ]
+      },
+      6: {
+        id: 6,
+        name: "NightStalker",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=180&fit=crop",
+        status: "offline",
+        activity: "Last seen yesterday",
+        movies: 156,
+        reviews: 72,
+        friends: 201,
+        email: "nightstalker@horrorverse.com",
+        memberSince: "December 2022",
+        location: "Seattle, WA",
+        bio: "Night owl and horror marathon host. The darker, the better!",
+        favoriteGenre: "Supernatural",
+        favoriteMovies: [
+          { title: "The Ritual", image: "the-ritual.jpg" },
+          { title: "Hereditary", image: "hereditary.jpg" },
+          { title: "Sinister", image: "sinister.jpg" }
+        ]
+      },
+      7: {
+        id: 7,
+        name: "DarkSoulCollector",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=180&fit=crop",
+        status: "online",
+        activity: "Creating watch party",
+        movies: 87,
+        reviews: 34,
+        friends: 156,
+        email: "darksoul@horrorverse.com",
+        memberSince: "May 2023",
+        location: "Boston, MA",
+        bio: "Collector of rare horror films. Always looking for the next scare!",
+        favoriteGenre: "Creature Horror",
+        favoriteMovies: [
+          { title: "Mov1", image: "mov1.jpg" },
+          { title: "The Conjuring", image: "the conjuring.jpg" },
+          { title: "The Forest", image: "the-forest.jpg" }
+        ]
+      },
+      8: {
+        id: 8,
+        name: "NightmareEnthusiast",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=180&fit=crop",
+        status: "online",
+        activity: "Watching marathon",
+        movies: 124,
+        reviews: 67,
+        friends: 203,
+        email: "nightmare@horrorverse.com",
+        memberSince: "January 2023",
+        location: "Miami, FL",
+        bio: "Living for those sleepless nights after a great horror film!",
+        favoriteGenre: "Supernatural",
+        favoriteMovies: [
+          { title: "The Conjuring", image: "the conjuring.jpg" },
+          { title: "The Curse of Humpty Dumpty", image: "the-curse-of-humpty-dumpty.jpg" },
+          { title: "Sinister", image: "sinister.jpg" }
+        ]
+      },
+      9: {
+        id: 9,
+        name: "HauntedCinephile",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=180&fit=crop",
+        status: "offline",
+        activity: "Last seen 5 hours ago",
+        movies: 56,
+        reviews: 23,
+        friends: 89,
+        email: "haunted@horrorverse.com",
+        memberSince: "August 2023",
+        location: "Denver, CO",
+        bio: "New to horror but loving every terrifying moment!",
+        favoriteGenre: "Psychological",
+        favoriteMovies: [
+          { title: "Leprechaun", image: "leprechaun.jpg" },
+          { title: "Hereditary", image: "hereditary.jpg" },
+          { title: "Midsommar", image: "midsommar.jpg" }
+        ]
+      },
+      10: {
+        id: 10,
+        name: "TerrorTales",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=180&fit=crop",
+        status: "online",
+        activity: "Writing blog post",
+        movies: 112,
+        reviews: 58,
+        friends: 198,
+        email: "terror@horrorverse.com",
+        memberSince: "February 2023",
+        location: "San Francisco, CA",
+        bio: "Horror blogger and podcast host. Spreading the love of fear!",
+        favoriteGenre: "Folk Horror",
+        favoriteMovies: [
+          { title: "The Ritual", image: "the-ritual.jpg" },
+          { title: "The Witch", image: "witch.jpg" },
+          { title: "Midsommar", image: "midsommar.jpg" }
+        ]
+      },
+      11: {
+        id: 11,
+        name: "BloodMoonRising",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=180&fit=crop",
+        status: "offline",
+        activity: "Last seen 1 day ago",
+        movies: 89,
+        reviews: 41,
+        friends: 145,
+        email: "bloodmoon@horrorverse.com",
+        memberSince: "July 2023",
+        location: "Nashville, TN",
+        bio: "Horror is art, and art is life. Living for the scares!",
+        favoriteGenre: "Slasher",
+        favoriteMovies: [
+          { title: "Scream", image: "scream.jpg" },
+          { title: "Halloween", image: "halloween.jpg" },
+          { title: "Witch", image: "witch.jpg" }
+        ]
+      }
+    };
+
+    function loadProfile() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('id');
+      
+      if (!userId) {
+        document.getElementById('profileHeader').innerHTML = '<div style="padding: 60px 20px; text-align: center;"><h2 style="color: #ff4444; margin-bottom: 20px;">No User Selected</h2><p style="color: #888; margin-bottom: 30px;">Please select a friend to view their profile.</p><button onclick="window.location.href=\'friends.html\'" style="padding: 15px 30px; border: 2px solid #dc143c; border-radius: 15px; background: #dc143c; color: #fff; font-weight: bold; cursor: pointer;">Back to Friends</button></div>';
+        return;
+      }
+
+      const user = usersDatabase[userId];
+      
+      if (!user) {
+        document.getElementById('profileHeader').innerHTML = '<div style="padding: 60px 20px; text-align: center;"><h2 style="color: #ff4444; margin-bottom: 20px;">User Not Found</h2><p style="color: #888; margin-bottom: 30px;">This user profile does not exist.</p><button onclick="window.location.href=\'friends.html\'" style="padding: 15px 30px; border: 2px solid #dc143c; border-radius: 15px; background: #dc143c; color: #fff; font-weight: bold; cursor: pointer;">Back to Friends</button></div>';
+        return;
+      }
+
+      document.title = user.name + ' - HorrorVerse';
+      
+      const statusBadge = user.status === 'online' ? '<div class="online-badge"><div class="online-dot"></div>Online Now</div>' : '<div class="offline-badge"><div class="offline-dot"></div>Offline</div>';
+
+      document.getElementById('profileHeader').innerHTML = '<img src="' + user.avatar + '" alt="' + user.name + '" class="profile-avatar">' + statusBadge + '<h1 class="profile-name">' + user.name + '</h1><p class="profile-activity">' + user.activity + '</p><div class="profile-stats"><div class="stat-box"><div class="stat-value">' + user.movies + '</div><div class="stat-label">Movies Watched</div></div><div class="stat-box"><div class="stat-value">' + user.reviews + '</div><div class="stat-label">Reviews Written</div></div><div class="stat-box"><div class="stat-value">' + user.friends + '</div><div class="stat-label">Friends</div></div></div><div class="profile-actions"><button class="btn-primary" onclick="sendMessage(' + user.id + ')">Send Message</button><button class="btn-success" onclick="addFriend(' + user.id + ')">Add Friend</button><button onclick="window.location.href=\'friends.html\'">Back to Friends</button></div>';
+
+      document.getElementById('profileInfo').innerHTML = '<div class="info-item"><div class="info-label">Email</div><div class="info-value">' + user.email + '</div></div><div class="info-item"><div class="info-label">Member Since</div><div class="info-value">' + user.memberSince + '</div></div><div class="info-item"><div class="info-label">Location</div><div class="info-value">' + user.location + '</div></div><div class="info-item"><div class="info-label">Favorite Genre</div><div class="info-value">' + user.favoriteGenre + '</div></div><div class="info-item" style="grid-column: 1 / -1;"><div class="info-label">Bio</div><div class="info-value">' + user.bio + '</div></div>';
+
+      let moviesHTML = '';
+      for(let i = 0; i < user.favoriteMovies.length; i++) {
+        moviesHTML += '<div class="movie-item"><img src="' + user.favoriteMovies[i].image + '" alt="' + user.favoriteMovies[i].title + '"><div class="movie-title">' + user.favoriteMovies[i].title + '</div></div>';
+      }
+      document.getElementById('favoriteMovies').innerHTML = moviesHTML;
+    }
+
+    function sendMessage(userId) {
+      const user = usersDatabase[userId];
+      showNotification('Opening chat with ' + user.name + '...', '#3498db');
+      sessionStorage.setItem('chatWith', JSON.stringify({
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        status: user.status
+      }));
+      setTimeout(function() {
+        window.location.href = 'messages.html';
+      }, 1000);
+    }
+
+    function addFriend(userId) {
+      const user = usersDatabase[userId];
+      showNotification('Friend request sent to ' + user.name + '!', '#2ecc71');
+    }
+
+    function showNotification(message, color) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = 'position: fixed; top: 100px; right: 30px; background: ' + color + '; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 1000; font-weight: bold;';
+      document.body.appendChild(notification);
+      setTimeout(function() {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(function() {
+          notification.remove();
+        }, 300);
+      }, 2500);
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

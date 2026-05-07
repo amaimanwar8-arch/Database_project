@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome - HorrorVerse Movie Hub</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      color: #fff;
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(2px);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      padding: 30px;
+      border: 2px solid crimson;
+      border-radius: 15px;
+      background: rgba(20, 0, 0, 0.6);
+      box-shadow: 0 0 30px crimson;
+      animation: fadeIn 2s ease;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 15px crimson;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #ddd;
+      margin-bottom: 30px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: 1px solid crimson;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(220, 20, 60, 0.3);
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="content">
+    <h1>Welcome to HorrorVerse 🎥</h1>
+    <p>Dive into the shadows of cinema — where every film tells a chilling story.</p>
+
+    <div class="button-group">
+      <a href="about.html" class="btn">Learn About Us</a>
+      <a href="user_login.html" class="btn">User Login</a>
+      <a href="user_signup.html" class="btn">User Signup</a>
+      <a href="admin_login.html" class="btn">Admin Login</a>
+      <a href="admin_signup.html" class="btn">Admin Signup</a>
+    </div>
+  </div>
+</body>
+</html>

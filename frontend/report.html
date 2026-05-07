@@ -1,0 +1,837 @@
+<script>const isAdmin = true;</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports - HorrorVerse</title>
+  <link rel="stylesheet" href="sidebar.css">
+<script src="sidebar.js" defer></script>
+
+  <style>
+    /* Reset & base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cinzel', serif;
+    }
+
+    body {
+      background: url('report.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: -1;
+      backdrop-filter: blur(3px);
+    }
+
+
+
+  
+  
+  
+    /* Main dashboard */
+    .dashboard {
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dashboard h1 {
+      font-size: 2.5rem;
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      margin-bottom: 30px;
+    }
+
+    /* Report controls */
+    .report-controls {
+      background: rgba(20,0,0,0.8);
+      border: 2px solid crimson;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 20px crimson;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .report-controls label {
+      color: #ddd;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .report-controls select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ff4444;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+
+    .export-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(220,20,60,0.8);
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+      margin-left: auto;
+    }
+
+    .export-btn:hover {
+      background: crimson;
+      box-shadow: 0 0 10px crimson;
+    }
+
+    /* Report cards */
+    .report-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .report-card {
+      background: rgba(20,0,0,0.8);
+      border: 2px solid crimson;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 20px crimson;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .report-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px #ff4444;
+    }
+
+    .report-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      border-bottom: 1px solid rgba(255,68,68,0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    th {
+      background: rgba(220,20,60,0.8);
+      color: #fff;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(255,255,255,0.05);
+    }
+
+    tr:hover td {
+      background: rgba(220,20,60,0.2);
+    }
+
+    .rank {
+      font-weight: bold;
+      color: #ff4444;
+    }
+
+    .rating {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+
+    .count {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    /* Charts section */
+    .charts-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    .chart-container {
+      background: rgba(20,0,0,0.8);
+      border: 2px solid crimson;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 20px crimson;
+    }
+
+    .chart-container h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #ff4444;
+      text-shadow: 0 0 10px crimson;
+      text-align: center;
+    }
+
+    .chart-placeholder {
+      height: 250px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      background: rgba(20,0,0,0.85);
+      border-top: 2px solid crimson;
+      margin-top: 50px;
+      box-shadow: 0 -2px 15px crimson;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: rgba(20,0,0,0.95);
+      border: 2px solid crimson;
+      padding: 30px 40px;
+      border-radius: 15px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 0 25px crimson;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      border: 2px solid crimson;
+      border-radius: 10px;
+      background: rgba(220,20,60,0.8);
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .modal-buttons button:hover {
+      background: crimson;
+      box-shadow: 0 0 15px crimson;
+    }
+
+    /* Hidden class for filtering */
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="menu-icon" onclick="openNav()">☰</button>
+  <div class="logo" onclick="window.location.href='index.html'">
+    💀 HorrorVerse
+  </div>
+</nav>
+
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-buttons">
+        <button id="yesLogout">Yes</button>
+        <button id="noLogout">No</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <h1>Analytical Reports</h1>
+
+    <!-- Report Controls -->
+    <div class="report-controls">
+      <label for="timeRange">Time Range:</label>
+      <select id="timeRange">
+        <option value="7days">Last 7 Days</option>
+        <option value="30days" selected>Last 30 Days</option>
+        <option value="90days">Last 90 Days</option>
+        <option value="all">All Time</option>
+      </select>
+
+      <label for="reportType">Report Type:</label>
+      <select id="reportType">
+        <option value="all" selected>All Reports</option>
+        <option value="movies">Movie Reports</option>
+        <option value="users">User Reports</option>
+        <option value="forums">Forum Reports</option>
+      </select>
+
+      <button class="export-btn" onclick="exportAllReports()">Export All Reports</button>
+    </div>
+
+    <!-- Report Cards -->
+    <div class="report-cards">
+      <!-- Top 10 Most-Watched Movies -->
+      <div class="report-card movie-report">
+        <h2>Top 10 Most-Watched Movies</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Movie Title</th>
+                <th>Genre</th>
+                <th>View Count</th>
+              </tr>
+            </thead>
+            <tbody id="mostWatchedTable">
+              <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <button class="export-btn" style="margin-top: 15px;" onclick="exportReport('mostWatched')">Export This Report</button>
+      </div>
+
+      <!-- Highest-Rated Movies -->
+      <div class="report-card movie-report">
+        <h2>Highest-Rated Movies</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Movie Title</th>
+                <th>Genre</th>
+                <th>Avg Rating</th>
+                <th>Reviews</th>
+              </tr>
+            </thead>
+            <tbody id="highestRatedTable">
+              <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <button class="export-btn" style="margin-top: 15px;" onclick="exportReport('highestRated')">Export This Report</button>
+      </div>
+
+      <!-- Most Active Users -->
+      <div class="report-card user-report">
+        <h2>Most Active Users</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Posts</th>
+                <th>Comments</th>
+                <th>Reviews</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="mostActiveUsersTable">
+              <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <button class="export-btn" style="margin-top: 15px;" onclick="exportReport('mostActiveUsers')">Export This Report</button>
+      </div>
+
+      <!-- Most Popular Forums -->
+      <div class="report-card forum-report">
+        <h2>Most Popular Forums</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Movie Title</th>
+                <th>Posts</th>
+                <th>Comments</th>
+                <th>Likes</th>
+                <th>Engagement</th>
+              </tr>
+            </thead>
+            <tbody id="mostPopularForumsTable">
+              <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <button class="export-btn" style="margin-top: 15px;" onclick="exportReport('mostPopularForums')">Export This Report</button>
+      </div>
+    </div>
+
+   
+  <footer>
+    &copy; 2025 HorrorVerse. All Rights Reserved.
+  </footer>
+
+  <script>
+    // Complete report data with time-based variations
+    const reportData = {
+      // Data for different time ranges
+      timeRanges: {
+        '7days': {
+          mostWatched: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", viewCount: 245 },
+            { rank: 2, title: "Nightmare Alley", genre: "Thriller", viewCount: 187 },
+            { rank: 3, title: "Shadow of the Wolf", genre: "Mystery", viewCount: 156 },
+            { rank: 4, title: "Whispers in the Dark", genre: "Horror", viewCount: 143 },
+            { rank: 5, title: "Crimson Moon", genre: "Supernatural", viewCount: 98 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", viewCount: 87 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", viewCount: 76 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", viewCount: 65 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", viewCount: 54 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", viewCount: 43 }
+          ],
+          highestRated: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", avgRating: 9.2, reviews: 45 },
+            { rank: 2, title: "Shadow of the Wolf", genre: "Mystery", avgRating: 8.9, reviews: 32 },
+            { rank: 3, title: "Nightmare Alley", genre: "Thriller", avgRating: 8.7, reviews: 38 },
+            { rank: 4, title: "Crimson Moon", genre: "Supernatural", avgRating: 8.5, reviews: 27 },
+            { rank: 5, title: "Whispers in the Dark", genre: "Horror", avgRating: 8.3, reviews: 34 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", avgRating: 8.1, reviews: 22 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", avgRating: 7.9, reviews: 29 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", avgRating: 7.8, reviews: 19 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", avgRating: 7.6, reviews: 16 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", avgRating: 7.4, reviews: 24 }
+          ],
+          mostActiveUsers: [
+            { rank: 1, username: "horror_fanatic", posts: 12, comments: 34, reviews: 5, total: 51 },
+            { rank: 2, username: "cinema_lover", posts: 9, comments: 28, reviews: 3, total: 40 },
+            { rank: 3, username: "dark_shadow", posts: 8, comments: 22, reviews: 4, total: 34 },
+            { rank: 4, username: "night_watcher", posts: 7, comments: 24, reviews: 2, total: 33 },
+            { rank: 5, username: "scream_queen", posts: 10, comments: 16, reviews: 3, total: 29 },
+            { rank: 6, username: "thriller_seeker", posts: 6, comments: 18, reviews: 2, total: 26 },
+            { rank: 7, username: "mystery_solver", posts: 7, comments: 14, reviews: 1, total: 22 },
+            { rank: 8, username: "ghost_hunter", posts: 5, comments: 15, reviews: 1, total: 21 },
+            { rank: 9, username: "fear_fan", posts: 4, comments: 12, reviews: 2, total: 18 },
+            { rank: 10, username: "cursed_cinema", posts: 3, comments: 11, reviews: 1, total: 15 }
+          ],
+          mostPopularForums: [
+            { rank: 1, title: "The Haunted Manor", posts: 17, comments: 64, likes: 143, engagement: 224 },
+            { rank: 2, title: "Nightmare Alley", posts: 14, comments: 58, likes: 132, engagement: 204 },
+            { rank: 3, title: "Shadow of the Wolf", posts: 13, comments: 46, likes: 87, engagement: 146 },
+            { rank: 4, title: "Crimson Moon", posts: 11, comments: 44, likes: 81, engagement: 136 },
+            { rank: 5, title: "Whispers in the Dark", posts: 9, comments: 42, likes: 78, engagement: 129 },
+            { rank: 6, title: "Echoes of Fear", posts: 8, comments: 38, likes: 65, engagement: 111 },
+            { rank: 7, title: "The Cursed Mirror", posts: 7, comments: 37, likes: 63, engagement: 107 },
+            { rank: 8, title: "Midnight Shadows", posts: 6, comments: 36, likes: 61, engagement: 103 },
+            { rank: 9, title: "Phantom's Lament", posts: 5, comments: 34, likes: 58, engagement: 97 },
+            { rank: 10, title: "Asylum of Lost Souls", posts: 4, comments: 25, likes: 46, engagement: 75 }
+          ]
+        },
+        '30days': {
+          mostWatched: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", viewCount: 1245 },
+            { rank: 2, title: "Nightmare Alley", genre: "Thriller", viewCount: 987 },
+            { rank: 3, title: "Shadow of the Wolf", genre: "Mystery", viewCount: 856 },
+            { rank: 4, title: "Whispers in the Dark", genre: "Horror", viewCount: 743 },
+            { rank: 5, title: "Crimson Moon", genre: "Supernatural", viewCount: 698 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", viewCount: 621 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", viewCount: 587 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", viewCount: 534 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", viewCount: 489 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", viewCount: 432 }
+          ],
+          highestRated: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", avgRating: 9.2, reviews: 156 },
+            { rank: 2, title: "Shadow of the Wolf", genre: "Mystery", avgRating: 8.9, reviews: 98 },
+            { rank: 3, title: "Nightmare Alley", genre: "Thriller", avgRating: 8.7, reviews: 134 },
+            { rank: 4, title: "Crimson Moon", genre: "Supernatural", avgRating: 8.5, reviews: 87 },
+            { rank: 5, title: "Whispers in the Dark", genre: "Horror", avgRating: 8.3, reviews: 112 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", avgRating: 8.1, reviews: 76 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", avgRating: 7.9, reviews: 93 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", avgRating: 7.8, reviews: 67 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", avgRating: 7.6, reviews: 54 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", avgRating: 7.4, reviews: 89 }
+          ],
+          mostActiveUsers: [
+            { rank: 1, username: "horror_fanatic", posts: 45, comments: 123, reviews: 12, total: 180 },
+            { rank: 2, username: "cinema_lover", posts: 32, comments: 98, reviews: 8, total: 138 },
+            { rank: 3, username: "dark_shadow", posts: 28, comments: 76, reviews: 15, total: 119 },
+            { rank: 4, username: "night_watcher", posts: 21, comments: 87, reviews: 6, total: 114 },
+            { rank: 5, username: "scream_queen", posts: 35, comments: 54, reviews: 9, total: 98 },
+            { rank: 6, username: "thriller_seeker", posts: 19, comments: 62, reviews: 7, total: 88 },
+            { rank: 7, username: "mystery_solver", posts: 24, comments: 48, reviews: 5, total: 77 },
+            { rank: 8, username: "ghost_hunter", posts: 17, comments: 52, reviews: 4, total: 73 },
+            { rank: 9, username: "fear_fan", posts: 15, comments: 43, reviews: 8, total: 66 },
+            { rank: 10, username: "cursed_cinema", posts: 12, comments: 38, reviews: 6, total: 56 }
+          ],
+          mostPopularForums: [
+            { rank: 1, title: "The Haunted Manor", posts: 67, comments: 234, likes: 543, engagement: 844 },
+            { rank: 2, title: "Nightmare Alley", posts: 54, comments: 198, likes: 432, engagement: 684 },
+            { rank: 3, title: "Shadow of the Wolf", posts: 43, comments: 176, likes: 387, engagement: 606 },
+            { rank: 4, title: "Crimson Moon", posts: 38, comments: 154, likes: 321, engagement: 513 },
+            { rank: 5, title: "Whispers in the Dark", posts: 32, comments: 132, likes: 298, engagement: 462 },
+            { rank: 6, title: "Echoes of Fear", posts: 29, comments: 118, likes: 265, engagement: 412 },
+            { rank: 7, title: "The Cursed Mirror", posts: 26, comments: 97, likes: 243, engagement: 366 },
+            { rank: 8, title: "Midnight Shadows", posts: 23, comments: 86, likes: 221, engagement: 330 },
+            { rank: 9, title: "Phantom's Lament", posts: 19, comments: 74, likes: 198, engagement: 291 },
+            { rank: 10, title: "Asylum of Lost Souls", posts: 16, comments: 65, likes: 176, engagement: 257 }
+          ]
+        },
+        '90days': {
+          mostWatched: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", viewCount: 3245 },
+            { rank: 2, title: "Nightmare Alley", genre: "Thriller", viewCount: 2787 },
+            { rank: 3, title: "Shadow of the Wolf", genre: "Mystery", viewCount: 2456 },
+            { rank: 4, title: "Whispers in the Dark", genre: "Horror", viewCount: 2143 },
+            { rank: 5, title: "Crimson Moon", genre: "Supernatural", viewCount: 1898 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", viewCount: 1721 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", viewCount: 1587 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", viewCount: 1434 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", viewCount: 1289 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", viewCount: 1132 }
+          ],
+          highestRated: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", avgRating: 9.1, reviews: 345 },
+            { rank: 2, title: "Shadow of the Wolf", genre: "Mystery", avgRating: 8.8, reviews: 267 },
+            { rank: 3, title: "Nightmare Alley", genre: "Thriller", avgRating: 8.6, reviews: 312 },
+            { rank: 4, title: "Crimson Moon", genre: "Supernatural", avgRating: 8.4, reviews: 234 },
+            { rank: 5, title: "Whispers in the Dark", genre: "Horror", avgRating: 8.2, reviews: 287 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", avgRating: 8.0, reviews: 198 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", avgRating: 7.8, reviews: 243 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", avgRating: 7.7, reviews: 187 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", avgRating: 7.5, reviews: 154 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", avgRating: 7.3, reviews: 219 }
+          ],
+          mostActiveUsers: [
+            { rank: 1, username: "horror_fanatic", posts: 112, comments: 345, reviews: 28, total: 485 },
+            { rank: 2, username: "cinema_lover", posts: 87, comments: 287, reviews: 19, total: 393 },
+            { rank: 3, username: "dark_shadow", posts: 76, comments: 234, reviews: 32, total: 342 },
+            { rank: 4, username: "night_watcher", posts: 65, comments: 256, reviews: 15, total: 336 },
+            { rank: 5, username: "scream_queen", posts: 92, comments: 167, reviews: 24, total: 283 },
+            { rank: 6, username: "thriller_seeker", posts: 54, comments: 187, reviews: 18, total: 259 },
+            { rank: 7, username: "mystery_solver", posts: 67, comments: 143, reviews: 12, total: 222 },
+            { rank: 8, username: "ghost_hunter", posts: 48, comments: 156, reviews: 11, total: 215 },
+            { rank: 9, username: "fear_fan", posts: 42, comments: 128, reviews: 19, total: 189 },
+            { rank: 10, username: "cursed_cinema", posts: 35, comments: 117, reviews: 15, total: 167 }
+          ],
+          mostPopularForums: [
+            { rank: 1, title: "The Haunted Manor", posts: 187, comments: 645, likes: 1343, engagement: 2175 },
+            { rank: 2, title: "Nightmare Alley", posts: 154, comments: 587, likes: 1132, engagement: 1873 },
+            { rank: 3, title: "Shadow of the Wolf", posts: 123, comments: 476, likes: 987, engagement: 1586 },
+            { rank: 4, title: "Crimson Moon", posts: 108, comments: 454, likes: 821, engagement: 1383 },
+            { rank: 5, title: "Whispers in the Dark", posts: 97, comments: 432, likes: 798, engagement: 1327 },
+            { rank: 6, title: "Echoes of Fear", posts: 89, comments: 418, likes: 765, engagement: 1272 },
+            { rank: 7, title: "The Cursed Mirror", posts: 76, comments: 397, likes: 743, engagement: 1216 },
+            { rank: 8, title: "Midnight Shadows", posts: 73, comments: 386, likes: 721, engagement: 1180 },
+            { rank: 9, title: "Phantom's Lament", posts: 69, comments: 374, likes: 698, engagement: 1141 },
+            { rank: 10, title: "Asylum of Lost Souls", posts: 56, comments: 265, likes: 576, engagement: 897 }
+          ]
+        },
+        'all': {
+          mostWatched: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", viewCount: 10245 },
+            { rank: 2, title: "Nightmare Alley", genre: "Thriller", viewCount: 8787 },
+            { rank: 3, title: "Shadow of the Wolf", genre: "Mystery", viewCount: 7656 },
+            { rank: 4, title: "Whispers in the Dark", genre: "Horror", viewCount: 6543 },
+            { rank: 5, title: "Crimson Moon", genre: "Supernatural", viewCount: 5898 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", viewCount: 5321 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", viewCount: 4787 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", viewCount: 4234 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", viewCount: 3789 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", viewCount: 3232 }
+          ],
+          highestRated: [
+            { rank: 1, title: "The Haunted Manor", genre: "Horror", avgRating: 9.0, reviews: 1245 },
+            { rank: 2, title: "Shadow of the Wolf", genre: "Mystery", avgRating: 8.7, reviews: 987 },
+            { rank: 3, title: "Nightmare Alley", genre: "Thriller", avgRating: 8.5, reviews: 1134 },
+            { rank: 4, title: "Crimson Moon", genre: "Supernatural", avgRating: 8.3, reviews: 834 },
+            { rank: 5, title: "Whispers in the Dark", genre: "Horror", avgRating: 8.1, reviews: 1012 },
+            { rank: 6, title: "Echoes of Fear", genre: "Psychological", avgRating: 7.9, reviews: 776 },
+            { rank: 7, title: "The Cursed Mirror", genre: "Horror", avgRating: 7.7, reviews: 893 },
+            { rank: 8, title: "Midnight Shadows", genre: "Thriller", avgRating: 7.6, reviews: 667 },
+            { rank: 9, title: "Phantom's Lament", genre: "Mystery", avgRating: 7.4, reviews: 554 },
+            { rank: 10, title: "Asylum of Lost Souls", genre: "Horror", avgRating: 7.2, reviews: 789 }
+          ],
+          mostActiveUsers: [
+            { rank: 1, username: "horror_fanatic", posts: 345, comments: 1123, reviews: 67, total: 1535 },
+            { rank: 2, username: "cinema_lover", posts: 287, comments: 987, reviews: 45, total: 1319 },
+            { rank: 3, username: "dark_shadow", posts: 234, comments: 876, reviews: 78, total: 1188 },
+            { rank: 4, username: "night_watcher", posts: 265, comments: 956, reviews: 32, total: 1253 },
+            { rank: 5, username: "scream_queen", posts: 312, comments: 667, reviews: 54, total: 1033 },
+            { rank: 6, username: "thriller_seeker", posts: 187, comments: 587, reviews: 43, total: 817 },
+            { rank: 7, username: "mystery_solver", posts: 243, comments: 543, reviews: 28, total: 814 },
+            { rank: 8, username: "ghost_hunter", posts: 198, comments: 556, reviews: 26, total: 780 },
+            { rank: 9, username: "fear_fan", posts: 176, comments: 478, reviews: 42, total: 696 },
+            { rank: 10, username: "cursed_cinema", posts: 154, comments: 437, reviews: 35, total: 626 }
+          ],
+          mostPopularForums: [
+            { rank: 1, title: "The Haunted Manor", posts: 567, comments: 2134, likes: 4543, engagement: 7244 },
+            { rank: 2, title: "Nightmare Alley", posts: 454, comments: 1987, likes: 4132, engagement: 6573 },
+            { rank: 3, title: "Shadow of the Wolf", posts: 343, comments: 1676, likes: 3587, engagement: 5606 },
+            { rank: 4, title: "Crimson Moon", posts: 338, comments: 1554, likes: 3321, engagement: 5213 },
+            { rank: 5, title: "Whispers in the Dark", posts: 332, comments: 1432, likes: 3298, engagement: 5062 },
+            { rank: 6, title: "Echoes of Fear", posts: 329, comments: 1418, likes: 3265, engagement: 5012 },
+            { rank: 7, title: "The Cursed Mirror", posts: 326, comments: 1397, likes: 3243, engagement: 4966 },
+            { rank: 8, title: "Midnight Shadows", posts: 323, comments: 1386, likes: 3221, engagement: 4930 },
+            { rank: 9, title: "Phantom's Lament", posts: 319, comments: 1374, likes: 3198, engagement: 4891 },
+            { rank: 10, title: "Asylum of Lost Souls", posts: 256, comments: 1165, likes: 2876, engagement: 4297 }
+          ]
+        }
+      }
+    };
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      renderReports();
+      setupLogoutModal();
+      
+      // Add event listeners for filters
+      document.getElementById('timeRange').addEventListener('change', updateReports);
+      document.getElementById('reportType').addEventListener('change', updateReports);
+    });
+
+    // Render all reports based on current filters
+    function renderReports() {
+      const timeRange = document.getElementById('timeRange').value;
+      const reportType = document.getElementById('reportType').value;
+      
+      // Get data for current time range
+      const currentData = reportData.timeRanges[timeRange];
+      
+      // Render each table with current data
+      renderMostWatched(currentData.mostWatched);
+      renderHighestRated(currentData.highestRated);
+      renderMostActiveUsers(currentData.mostActiveUsers);
+      renderMostPopularForums(currentData.mostPopularForums);
+      
+      // Apply report type filtering
+      filterReportsByType(reportType);
+    }
+
+    // Render Most Watched Movies table
+    function renderMostWatched(data) {
+      const tableBody = document.getElementById('mostWatchedTable');
+      tableBody.innerHTML = '';
+      
+      data.forEach(movie => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="rank">${movie.rank}</td>
+          <td>${movie.title}</td>
+          <td>${movie.genre}</td>
+          <td class="count">${movie.viewCount.toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Render Highest Rated Movies table
+    function renderHighestRated(data) {
+      const tableBody = document.getElementById('highestRatedTable');
+      tableBody.innerHTML = '';
+      
+      data.forEach(movie => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="rank">${movie.rank}</td>
+          <td>${movie.title}</td>
+          <td>${movie.genre}</td>
+          <td class="rating">${movie.avgRating}/10</td>
+          <td class="count">${movie.reviews}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Render Most Active Users table
+    function renderMostActiveUsers(data) {
+      const tableBody = document.getElementById('mostActiveUsersTable');
+      tableBody.innerHTML = '';
+      
+      data.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="rank">${user.rank}</td>
+          <td>${user.username}</td>
+          <td class="count">${user.posts}</td>
+          <td class="count">${user.comments}</td>
+          <td class="count">${user.reviews}</td>
+          <td class="count">${user.total}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Render Most Popular Forums table
+    function renderMostPopularForums(data) {
+      const tableBody = document.getElementById('mostPopularForumsTable');
+      tableBody.innerHTML = '';
+      
+      data.forEach(forum => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="rank">${forum.rank}</td>
+          <td>${forum.title}</td>
+          <td class="count">${forum.posts}</td>
+          <td class="count">${forum.comments}</td>
+          <td class="count">${forum.likes}</td>
+          <td class="count">${forum.engagement}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Filter reports by type
+    function filterReportsByType(reportType) {
+      const movieReports = document.querySelectorAll('.movie-report');
+      const userReports = document.querySelectorAll('.user-report');
+      const forumReports = document.querySelectorAll('.forum-report');
+      
+      // Show/hide reports based on type
+      if (reportType === 'all') {
+        // Show all reports
+        movieReports.forEach(report => report.classList.remove('hidden'));
+        userReports.forEach(report => report.classList.remove('hidden'));
+        forumReports.forEach(report => report.classList.remove('hidden'));
+      } else if (reportType === 'movies') {
+        // Show only movie reports
+        movieReports.forEach(report => report.classList.remove('hidden'));
+        userReports.forEach(report => report.classList.add('hidden'));
+        forumReports.forEach(report => report.classList.add('hidden'));
+      } else if (reportType === 'users') {
+        // Show only user reports
+        movieReports.forEach(report => report.classList.add('hidden'));
+        userReports.forEach(report => report.classList.remove('hidden'));
+        forumReports.forEach(report => report.classList.add('hidden'));
+      } else if (reportType === 'forums') {
+        // Show only forum reports
+        movieReports.forEach(report => report.classList.add('hidden'));
+        userReports.forEach(report => report.classList.add('hidden'));
+        forumReports.forEach(report => report.classList.remove('hidden'));
+      }
+    }
+
+    // Update reports based on filters
+    function updateReports() {
+      renderReports();
+    }
+
+    // Export a specific report
+    function exportReport(reportType) {
+      const timeRange = document.getElementById('timeRange').value;
+      const currentData = reportData.timeRanges[timeRange];
+      
+      let csvContent = "data:text/csv;charset=utf-8,";
+      let headers = "";
+      let data = [];
+      
+      switch(reportType) {
+        case 'mostWatched':
+          headers = "Rank,Movie Title,Genre,View Count\n";
+          data = currentData.mostWatched.map(m => `${m.rank},"${m.title}",${m.genre},${m.viewCount}`);
+          break;
+        case 'highestRated':
+          headers = "Rank,Movie Title,Genre,Average Rating,Reviews\n";
+          data = currentData.highestRated.map(m => `${m.rank},"${m.title}",${m.genre},${m.avgRating},${m.reviews}`);
+          break;
+        case 'mostActiveUsers':
+          headers = "Rank,Username,Posts,Comments,Reviews,Total Activity\n";
+          data = currentData.mostActiveUsers.map(u => `${u.rank},${u.username},${u.posts},${u.comments},${u.reviews},${u.total}`);
+          break;
+        case 'mostPopularForums':
+          headers = "Rank,Movie Title,Posts,Comments,Likes,Total Engagement\n";
+          data = currentData.mostPopularForums.map(f => `${f.rank},"${f.title}",${f.posts},${f.comments},${f.likes},${f.engagement}`);
+          break;
+      }
+      
+      csvContent += headers + data.join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `horrorverse_${reportType}_${timeRange}_report.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Export all reports
+    function exportAllReports() {
+      const timeRange = document.getElementById('timeRange').value;
+      alert(`All reports for ${timeRange} have been exported. In a full implementation, this would download a ZIP file containing all reports.`);
+      
+      // For demonstration, export the first report
+      exportReport('mostWatched');
+    }
+
+
+
+    // Logout modal functions
+    function setupLogoutModal() {
+      const logoutModal = document.getElementById("logoutModal");
+      const yesLogout = document.getElementById("yesLogout");
+      const noLogout = document.getElementById("noLogout");
+
+      yesLogout.addEventListener("click", () => {
+        window.location.href = "index.html"; 
+      });
+
+      noLogout.addEventListener("click", () => {
+        logoutModal.style.display = "none";
+      });
+    }
+
+    function showLogoutModal() {
+      document.getElementById("logoutModal").style.display = "flex";
+    }
+  </script>
+</body>
+</html>

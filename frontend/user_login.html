@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login - HorrorVerse</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cinzel', serif; }
+    body {
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      position: relative;
+    }
+    body::before {
+      content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); z-index: 0;
+    }
+    .login-box {
+      position: relative; z-index: 1;
+      background: rgba(20,0,0,0.9);
+      padding: 50px 60px;
+      border-radius: 20px;
+      border: 3px solid crimson;
+      box-shadow: 0 0 40px rgba(220,20,60,0.8);
+      width: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 20px crimson;
+      color: #ff4444;
+    }
+    input {
+      width: 100%;
+      padding: 16px;
+      margin: 12px 0;
+      border: 2px solid crimson;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 1.1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+    input:focus {
+      border-color: #ff4444;
+      box-shadow: 0 0 20px rgba(255,68,68,0.5);
+    }
+    button {
+      width: 100%;
+      padding: 18px;
+      margin-top: 25px;
+      background: linear-gradient(135deg, crimson, #8b0000);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(220,20,60,0.6);
+      transition: 0.4s;
+    }
+    button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(220,20,60,0.9);
+    }
+    .signup-link {
+      margin-top: 25px;
+      color: #ff6666;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+    .signup-link:hover { color: #fff; text-decoration: underline; }
+    .error { color: #ff4444; margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <h1>Welcome Back</h1>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <div id="errorMsg" class="error"></div>
+    <button type="submit">LOGIN</button>
+  </form>
+  <a href="user_signup.html" class="signup-link">Don't have an account? Sign Up</a>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    document.getElementById('errorMsg').textContent = "Email and password required!";
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      alert(`Welcome back, ${data.user.name}!`);
+      window.location.href = "user_home.html";
+    } else {
+      document.getElementById('errorMsg').textContent = data.error || "Login failed";
+    }
+  } catch (err) {
+    document.getElementById('errorMsg').textContent = "Server not running or blocked. Start backend!";
+  }
+});
+</script>
+
+</body>
+</html>
